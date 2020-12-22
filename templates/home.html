@@ -54,7 +54,15 @@
             </div>
         </div>
         <div class="col">
-            test
+            <div class="form-group row">
+                <label>Dates</label>
+                <input type="text" class="form-control" id="datepicker"></input>
+                <script>
+                    $('#datepicker').datepicker({
+                        multidate: true
+                    });
+                </script>
+            </div>
         </div>
     </div>
 </form>
