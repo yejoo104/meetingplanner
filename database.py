@@ -6,18 +6,19 @@ cursor = connection.cursor()
 
 # Command for creating meeting table
 meeting_command = """CREATE TABLE MEETING (
-eventname TEXT,
-email TEXT,
+eventname TEXT NOT NULL,
+email TEXT NOT NULL,
 name TEXT,
-password TEXT,
+password TEXT NOT NULL,
 min_event INT,
 max_event INT,
 min_people INT,
 max_people INT,
-dates TEXT,
-start_time TEXT,
-end_time TEXT,
-code TEXT);"""
+dates TEXT NOT NULL,
+start_time TEXT NOT NULL,
+end_time TEXT NOT NULL,
+code TEXT NOT NULL,
+PRIMARY KEY(code));"""
 
 cursor.execute(meeting_command)
 
