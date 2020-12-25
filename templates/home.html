@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block main %}
-<form>
+<form id="form" onsubmit="return validateForm();">
     <div class="row">
         <div class="col">
             <div class="form-group row">
@@ -35,11 +35,11 @@
             <div class="form-group row">
                 <label class="col-sm-4 col-form-label">Number of Events</label>
                 <div class="col-sm-3">
-                    <input type="number" min="0" class="form-control" placeholder="Minimum">
+                    <input type="number" id="min_event" min="0" class="form-control" placeholder="Minimum">
                 </div>
                 <div class="col-sm-1">~</div>
                 <div class="col-sm-3">
-                    <input type="number" min="0" class="form-control" placeholder="Maximum">
+                    <input type="number" id="max_event" min="0" class="form-control" placeholder="Maximum">
                 </div>
             </div>
             <div class="form-group row">
@@ -82,6 +82,7 @@
                         {% for i in range(25) %}
                         <option value="{{ i }}">{{ i }}:00</option>
                         {% endfor %}
+                    </select>
                 </div>
             </div>
         </div>
@@ -90,4 +91,16 @@
         <button type="submit" class="btn btn-primary">Create Meeting</button>
     </div>
 </form>
+
+<script>
+    function validateForm(){
+        var min_event = document.getElementById("min_event").value;
+        var max_event = document.getElementById("max_event").value;
+        
+        if (min_event > max_event){
+            alert("Minimum number of events cannot be bigger than the maximum number of events");
+            return false;
+        }
+    }
+</script>
 {% endblock %}
