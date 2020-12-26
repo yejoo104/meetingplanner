@@ -45,11 +45,11 @@
             <div class="form-group row">
                 <label class="col-sm-4 col-form-label">People per Event</label>
                 <div class="col-sm-3">
-                    <input type="number" min="0" class="form-control" placeholder="Minimum">
+                    <input type="number" id="min_people" min="0" class="form-control" placeholder="Minimum">
                 </div>
                 <div class="col-sm-1">~</div>
                 <div class="col-sm-3">
-                    <input type="number" min="0" class="form-control" placeholder="Maximum">
+                    <input type="number" id="max_people" min="0" class="form-control" placeholder="Maximum">
                 </div>
             </div>
         </div>
@@ -57,7 +57,7 @@
             <div class="form-group row">
                 <label class="col-sm-4 col-form-label">Dates</label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control" id="datepicker" required></input>
+                    <input type="text" class="form-control" id="datepicker" required autocomplete="off"></input>
                     <script>
                         $('#datepicker').datepicker({
                             multidate: true
@@ -68,7 +68,7 @@
             <div class="form-group row">
                 <label class="col-sm-4 col-form-label">No earlier than</label>
                 <div class="col-sm-7">
-                    <select class="form-control" required>
+                    <select id="start_time" class="form-control" required>
                         {% for i in range(24) %}
                         <option value="{{ i }}">{{ i }}:00</option>
                         {% endfor %}
@@ -78,7 +78,7 @@
             <div class="form-group row">
                 <label class="col-sm-4 col-form-label">No later than</label>
                 <div class="col-sm-7">
-                    <select class="form-control" required>
+                    <select id="end_time" class="form-control" required>
                         {% for i in range(25) %}
                         <option value="{{ i }}">{{ i }}:00</option>
                         {% endfor %}
@@ -99,6 +99,22 @@
         
         if (min_event > max_event){
             alert("Minimum number of events cannot be bigger than the maximum number of events");
+            return false;
+        }
+        
+        var min_people = document.getElementById("min_people").value;
+        var max_people = document.getElementById("max_people").value;
+        
+        if (min_people > max_people){
+            alert("Minimum number of people cannot be bigger than the maximum number of people");
+            return false;
+        }
+        
+        var start_time = document.getElementById("start_time").value;
+        var end_time = document.getElementById("end_time").value;
+        
+        if (start_time >= end_time){
+            alert("Not a proper time slot");
             return false;
         }
     }
