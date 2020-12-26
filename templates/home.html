@@ -110,8 +110,8 @@
             return false;
         }
         
-        var start_time = document.getElementById("start_time").value;
-        var end_time = document.getElementById("end_time").value;
+        var start_time = parseInt(document.getElementById("start_time").value);
+        var end_time = parseInt(document.getElementById("end_time").value);
         
         if (start_time >= end_time){
             alert("Not a proper time slot");
