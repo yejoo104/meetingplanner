@@ -17,10 +17,23 @@ max_people INT,
 dates TEXT NOT NULL,
 start_time TEXT NOT NULL,
 end_time TEXT NOT NULL,
+hours INT NOT NULL,
+minutes INT NOT NULL,
 code TEXT NOT NULL,
 PRIMARY KEY(code));"""
 
 cursor.execute(meeting_command)
+
+# Command for creating registration table
+registration_command = """CREATE TABLE REGISTRATION (
+email TEXT NOT NULL,
+name TEXT,
+password TEXT NOT NULL,
+availability TEXT,
+meeting_code TEXT NOT NULL,
+admin BOOL NOT NULL);"""
+
+cursor.execute(registration_command)
 
 # Commit
 connection.commit()
