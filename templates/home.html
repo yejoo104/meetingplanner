@@ -5,13 +5,13 @@
 {% endblock %}
 
 {% block main %}
-<form id="form" onsubmit="return validateForm();" action="/" method="post">
+<form id="form" onsubmit="return validateForm();" action="/" method="post" style="margin-top:50px; margin-left:100px; margin-right:100px;">
     <div class="row">
         <div class="col">
             <div class="form-group row">
                 <label for="eventname" class="col-sm-4 col-form-label">Event Name</label>
                 <div class="col-sm-7">
-                    <input name="eventname" type="test" class="form-control" id="eventname" required autocomplete="off">
+                    <input name="eventname" type="text" class="form-control" id="eventname" required autocomplete="off">
                 </div>
             </div>
             <div class="form-group row">
@@ -35,21 +35,21 @@
             <div class="form-group row">
                 <label class="col-sm-4 col-form-label">Number of Events</label>
                 <div class="col-sm-3">
-                    <input name="min_event" type="number" id="min_event" min="0" class="form-control" placeholder="Minimum">
+                    <input name="min_event" type="number" id="min_event" min="0" class="form-control" placeholder="Min">
                 </div>
                 <div class="col-sm-1">~</div>
                 <div class="col-sm-3">
-                    <input name="max_event" type="number" id="max_event" min="0" class="form-control" placeholder="Maximum">
+                    <input name="max_event" type="number" id="max_event" min="0" class="form-control" placeholder="Max">
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-sm-4 col-form-label">People per Event</label>
                 <div class="col-sm-3">
-                    <input name="min_people" type="number" id="min_people" min="0" class="form-control" placeholder="Minimum">
+                    <input name="min_people" type="number" id="min_people" min="0" class="form-control" placeholder="Min">
                 </div>
                 <div class="col-sm-1">~</div>
                 <div class="col-sm-3">
-                    <input name="max_people" type="number" id="max_people" min="0" class="form-control" placeholder="Maximum">
+                    <input name="max_people" type="number" id="max_people" min="0" class="form-control" placeholder="Max">
                 </div>
             </div>
         </div>

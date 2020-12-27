@@ -23,6 +23,10 @@ def plannerhome():
             connection.close
         return redirect("/" + code)
 
+@app.route("/register")
+def register():
+    return render_template("register.html")
+
 @app.route("/<meeting_id>")
 def get_meeting(meeting_id):
     return str(meeting_id)
