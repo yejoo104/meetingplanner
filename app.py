@@ -23,9 +23,13 @@ def plannerhome():
             connection.close
         return redirect("/" + code)
 
-@app.route("/register")
-def register():
-    return render_template("register.html")
+@app.route("/join/", defaults={'meeting_id': ''})
+@app.route("/join/<meeting_id>")
+def register(meeting_id):
+    if meeting_id == "":
+        return render_template("join.html")
+    else:
+        return render_template("join.html", meeting_code = meeting_id)
 
 @app.route("/<meeting_id>")
 def get_meeting(meeting_id):
