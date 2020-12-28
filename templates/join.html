@@ -5,6 +5,11 @@
 {% endblock %}
 
 {% block main %}
+<div style="margin-top:20px; margin-left:30px;">
+    <a>If you're joining for the first time, remember your email, name, and password in order to access the meeting in the future.</a><br>
+    <a>If you've joined the meeting before and want to edit your availability, log in using the email, name, and password you used when you joined.</a><br>
+    <a>Note: You cannot create multiple accounts to the same meeting with one email address</a>
+</div>
 <form method="post" style="margin-top: 50px; margin-left: 300px; margin-right: 300px;">
     <div class="form-group row">
         <label class="col col-form-label">Email</label>
@@ -40,5 +45,14 @@
         <button type="submit" class="btn btn-primary">Join Meeting</button>
     </div>
 </form>
-    
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+            <script>
+                alert('{{ message }}')
+            </script>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
 {% endblock %}
