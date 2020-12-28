@@ -28,7 +28,7 @@ def plannerhome():
         return redirect("/" + code)
 
 @app.route("/join/", defaults={'meeting_id': ''}, methods=["GET", "POST"])
-@app.route("/join/<meeting_id>", methods=["GET", "POST"])
+@app.route("/join/<meeting_id>/", methods=["GET", "POST"])
 def join(meeting_id):
     if request.method == "GET":
         if meeting_id == "":
@@ -56,11 +56,12 @@ def join(meeting_id):
             
             # meeting exists and this user is new
             if len(rows) == 0:
+                registrant_code = str(uuid.uuid4())
                 passwordhash = generate_password_hash(formdata["password"])
-                insert_command = "INSERT INTO REGISTRATION (email, name, password, meeting_code, admin) VALUES (?, ?, ?, ?, ?)"
-                cursor.execute(insert_command, (formdata["email"], formdata["name"], passwordhash, formdata["meeting_id"], False))
+                insert_command = "INSERT INTO REGISTRATION (email, name, password, meeting_code, registrant_code, admin) VALUES (?, ?, ?, ?, ?, ?)"
+                cursor.execute(insert_command, (formdata["email"], formdata["name"], passwordhash, formdata["meeting_id"], registrant_code, False))
                 connection.commit()
-                return redirect("/" + formdata["meeting_id"])
+                return redirect("/" + formdata["meeting_id"] + "/" + registrant_code + "/")
             
             # meeting exists and user info is wrong
             if rows[0][1] != formdata["name"]:
@@ -71,9 +72,12 @@ def join(meeting_id):
                 return redirect("/join/")
             
             # meeting exists and this user is returning
-            return redirect("/" + formdata["meeting_id"])
+            return redirect("/" + formdata["meeting_id"] + "/" + rows[0][5] + "/")
             
+@app.route("/<meeting_id>/<registrant_id>/")
+def get_availability(meeting_id, registrant_id):
+    return str(meeting_id) + "\n" + str(registrant_id)
 
-@app.route("/<meeting_id>")
+@app.route("/<meeting_id>/")
 def get_meeting(meeting_id):
     return str(meeting_id)
