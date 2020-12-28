@@ -20,16 +20,26 @@ def plannerhome():
             cursor.execute(command, (formdata["eventname"], formdata["email"], formdata["name"], passwordhash, formdata["min_event"], formdata["max_event"], formdata["min_people"], formdata["max_people"], formdata["dates"], formdata["start_time"], formdata["end_time"], formdata["hours"], formdata["minutes"], code))
         
             connection.commit()
-            connection.close
         return redirect("/" + code)
 
-@app.route("/join/", defaults={'meeting_id': ''})
-@app.route("/join/<meeting_id>")
-def register(meeting_id):
-    if meeting_id == "":
-        return render_template("join.html")
-    else:
-        return render_template("join.html", meeting_code = meeting_id)
+@app.route("/join/", defaults={'meeting_id': ''}, methods=["GET", "POST"])
+@app.route("/join/<meeting_id>", methods=["GET", "POST"])
+def join(meeting_id):
+    if request.method == "GET":
+        if meeting_id == "":
+            return render_template("join.html")
+        else:
+            return render_template("join.html", meeting_code = meeting_id)
+    if request.method == "POST":
+        formdata = request.form
+        passwordhash = generate_password_hash(formdata["password"])
+        with sqlite3.connect("database.db") as connection:
+            cursor = connection.cursor()
+            command = "INSERT INTO REGISTRATION (email, name, password, meeting_code, admin) VALUES (?, ?, ?, ?, ?)"
+            cursor.execute(command, (formdata["email"], formdata["name"], passwordhash, formdata["meeting_id"], False))
+            connection.commit()
+        return redirect("/" + formdata["meeting_id"])
+            
 
 @app.route("/<meeting_id>")
 def get_meeting(meeting_id):
