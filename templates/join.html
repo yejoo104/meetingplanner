@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+{% block main %}
+<form style="margin-top: 50px; margin-left: 300px; margin-right: 300px;">
+    <div class="form-group row">
+        <label class="col col-form-label">Email</label>
+        <div class="col">
+            <input type="email" class="form-control">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col col-form-label">Name</label>
+        <div class="col">
+            <input type="text" class="form-control">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col col-form-label">Password</label>
+        <div class="col">
+            <input type="password" class="form-control">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col col-form-label">Meeting Code</label>
+        <div class="col">
+            {% if meeting_code %}
+            <select class="form-control">
+                <option value="{{ meeting_code }}" selected>{{ meeting_code }}</option>
+            </select>
+            {% else %}
+            <input type="text" class="form-control">
+            {% endif %}
+        </div>
+    </div>
+    <div class="col text-center">
+        <button type="submit" class="btn btn-primary">Join Meeting</button>
+    </div>
+</form>
+    
+{% endblock %}
