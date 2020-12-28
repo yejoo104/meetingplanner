@@ -2,7 +2,7 @@ import sqlite3
 import uuid
 
 from flask import Flask, render_template, request, redirect, flash
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = 'eicdfwi375pfme3795e93bco3854uf'
@@ -41,24 +41,37 @@ def join(meeting_id):
             cursor = connection.cursor()
             
             # if meeting does not exist, alert user
-            search_command = "SELECT * FROM MEETING WHERE code=?"
-            cursor.execute(search_command, (formdata["meeting_id"],))
+            meeting_search_command = "SELECT * FROM MEETING WHERE code=?"
+            cursor.execute(meeting_search_command, (formdata["meeting_id"],))
             rows = cursor.fetchall()
             
             if len(rows) != 1:
                 flash("This meeting code does not exist")
                 return redirect("/join/")
             
+            # Search user email
+            email_search_command = "SELECT * FROM REGISTRATION WHERE email=?"
+            cursor.execute(email_search_command, (formdata["email"],))
+            rows = cursor.fetchall()
+            
             # meeting exists and this user is new
-            passwordhash = generate_password_hash(formdata["password"])
-            insert_command = "INSERT INTO REGISTRATION (email, name, password, meeting_code, admin) VALUES (?, ?, ?, ?, ?)"
-            cursor.execute(command, (formdata["email"], formdata["name"], passwordhash, formdata["meeting_id"], False))
-            connection.commit()
+            if len(rows) == 0:
+                passwordhash = generate_password_hash(formdata["password"])
+                insert_command = "INSERT INTO REGISTRATION (email, name, password, meeting_code, admin) VALUES (?, ?, ?, ?, ?)"
+                cursor.execute(insert_command, (formdata["email"], formdata["name"], passwordhash, formdata["meeting_id"], False))
+                connection.commit()
+                return redirect("/" + formdata["meeting_id"])
             
             # meeting exists and user info is wrong
+            if rows[0][1] != formdata["name"]:
+                flash("Incorrect name")
+                return redirect("/join/")
+            if not check_password_hash(rows[0][2], formdata["password"]):
+                flash("Incorrect password")
+                return redirect("/join/")
             
             # meeting exists and this user is returning
-        return redirect("/" + formdata["meeting_id"])
+            return redirect("/" + formdata["meeting_id"])
             
 
 @app.route("/<meeting_id>")
