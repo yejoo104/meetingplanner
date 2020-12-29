@@ -6,16 +6,24 @@
 {% block main %}
 <div class="container">
     <div class="row">
+        <div class="column">
+            <div style="width:40px; height: 24px;"></div>
+            {% for i in range(9,12) %}
+            <div style="width: 40px; height: 30px; font-size:10px;">{{ i }}: 00</div>
+            {% endfor %}
+        </div>
         {% for i in ["Jan 30", "Feb 1"] %}
         <div class="column">
-            <div>
+            <div style="height: 30px; font-size: 14px; text-align: center;">
                 {{ i }}
             </div>
             <div>
+                {% for j in range(3) %}
                 <div>
                     <div style="width: 40px; height:15px; border-left: 1px black solid; background: #f0ffff; border-top: 1px black solid; border-right: 1px black solid;"></div>
                     <div style="width: 40px; height:15px; border-left: 1px black solid; background: #f0ffff; border-top: 1px black dotted; border-right: 1px black solid;"></div>
                 </div>
+                {% endfor %}
             </div>
         </div>
         {% endfor %}
