@@ -76,7 +76,7 @@ def join(meeting_id):
             
 @app.route("/<meeting_id>/<registrant_id>/")
 def get_availability(meeting_id, registrant_id):
-    return str(meeting_id) + "\n" + str(registrant_id)
+    return render_template("availability.html")
 
 @app.route("/<meeting_id>/")
 def get_meeting(meeting_id):
