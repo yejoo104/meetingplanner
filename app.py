@@ -50,8 +50,8 @@ def join(meeting_id):
                 return redirect("/join/")
             
             # Search user email
-            email_search_command = "SELECT * FROM REGISTRATION WHERE email=?"
-            cursor.execute(email_search_command, (formdata["email"],))
+            email_search_command = "SELECT name, password, registrant_code FROM REGISTRATION WHERE meeting_code=? AND email=?"
+            cursor.execute(email_search_command, (formdata["meeting_id"], formdata["email"],))
             rows = cursor.fetchall()
             
             # meeting exists and this user is new
@@ -64,15 +64,15 @@ def join(meeting_id):
                 return redirect("/" + formdata["meeting_id"] + "/" + registrant_code + "/")
             
             # meeting exists and user info is wrong
-            if rows[0][1] != formdata["name"]:
+            if rows[0][0] != formdata["name"]:
                 flash("Incorrect name")
                 return redirect("/join/")
-            if not check_password_hash(rows[0][2], formdata["password"]):
+            if not check_password_hash(rows[0][1], formdata["password"]):
                 flash("Incorrect password")
                 return redirect("/join/")
             
             # meeting exists and this user is returning
-            return redirect("/" + formdata["meeting_id"] + "/" + rows[0][5] + "/")
+            return redirect("/" + formdata["meeting_id"] + "/" + rows[0][2] + "/")
             
 @app.route("/<meeting_id>/<registrant_id>/")
 def get_availability(meeting_id, registrant_id):
