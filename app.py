@@ -1,8 +1,12 @@
 import sqlite3
 import uuid
+import datetime
 
 from flask import Flask, render_template, request, redirect, flash
 from werkzeug.security import generate_password_hash, check_password_hash
+
+MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"]
+WEEKDAYS = ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"]
 
 app = Flask(__name__)
 app.secret_key = 'eicdfwi375pfme3795e93bco3854uf'
@@ -77,16 +81,28 @@ def join(meeting_id):
 @app.route("/<meeting_id>/<registrant_id>")
 def get_availability(meeting_id, registrant_id):
     with sqlite3.connect("database.db") as connection:
+    
+        # Fetch this particular meeting info
         cursor = connection.cursor()
         meeting_search = "SELECT dates, start_time, end_time FROM MEETING WHERE code=?"
         cursor.execute(meeting_search, (meeting_id, ))
         rows = cursor.fetchall()
         
+        # Modify selected info
         dates = rows[0][0].split(",")
+        dates_days = []
+        for date in dates:
+            date = date.split("/")
+            month = MONTHS[int(date[0]) - 1]
+            day = date[1]
+            weekday = WEEKDAYS[datetime.datetime(int(date[2]), int(date[0]), int(date[1])).weekday()]
+            dates_days.append((month + " " + day, weekday))
+        
         start_time = int(rows[0][1])
         end_time = int(rows[0][2])
         
-        return render_template("availability.html", dates = dates, start_time = start_time, end_time = end_time)
+        # return template
+        return render_template("availability.html", dates_days = dates_days, start_time = start_time, end_time = end_time)
 
 @app.route("/<meeting_id>/")
 def get_meeting(meeting_id):

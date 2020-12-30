@@ -12,10 +12,13 @@
             <div style="width: 40px; height: 30px; font-size:10px;">{{ i }}: 00</div>
             {% endfor %}
         </div>
-        {% for i in dates %}
-        <div class="column">
-            <div style="height: 30px; font-size: 14px; text-align: center;">
-                {{ i }}
+        {% for date_day in dates_days %}
+        <div class="column" style="width: 45px;">
+            <div style="height: 13px; font-size: 11px; text-align: center;">
+                {{ date_day[0] }}
+            </div>
+            <div style="height: 17px; font-size: 11px; text-align: center;">
+                {{ date_day[1] }}
             </div>
             <div>
                 {% for j in range(start_time, end_time) %}
