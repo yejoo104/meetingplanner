@@ -3,6 +3,14 @@
 {% block title %}
 {% endblock %}
 
+{% block script %}
+<script>
+    function ChangeColor(current){
+        current.style.background="blue";
+    }
+</script>
+{% endblock %}
+
 {% block main %}
 <div class="container">
     <div class="row">
@@ -23,11 +31,11 @@
             <div>
                 {% for j in range(start_time, end_time) %}
                 <div>
-                    <div style="width: 40px; height:15px; border-left: 1px black solid; background: #f0ffff; border-top: 1px black solid; border-right: 1px black solid;"></div>
+                    <div onmousedown="ChangeColor(this)"style="width: 40px; height:15px; border-left: 1px black solid; background: #f0ffff; border-top: 1px black solid; border-right: 1px black solid;"></div>
                     {% if j != end_time - 1 %}
-                    <div style="width: 40px; height:15px; border-left: 1px black solid; background: #f0ffff; border-top: 1px black dotted; border-right: 1px black solid;"></div>
+                    <div onmousedown="ChangeColor(this)" style="width: 40px; height:15px; border-left: 1px black solid; background: #f0ffff; border-top: 1px black dotted; border-right: 1px black solid;"></div>
                     {% else %}
-                    <div style="width: 40px; height:15px; border-left: 1px black solid; background: #f0ffff; border-top: 1px black dotted; border-right: 1px black solid; border-bottom: 1px black solid"></div>
+                    <div onmousedown="ChangeColor(this)" id="b{{ date_day[0] }}{{ j }}" style="width: 40px; height:15px; border-left: 1px black solid; background: #f0ffff; border-top: 1px black dotted; border-right: 1px black solid; border-bottom: 1px black solid"></div>
                     {% endif %}
                 </div>
                 {% endfor %}
