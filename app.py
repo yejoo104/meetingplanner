@@ -28,7 +28,7 @@ def plannerhome():
         return redirect("/" + code)
 
 @app.route("/join/", defaults={'meeting_id': ''}, methods=["GET", "POST"])
-@app.route("/join/<meeting_id>/", methods=["GET", "POST"])
+@app.route("/join/<meeting_id>", methods=["GET", "POST"])
 def join(meeting_id):
     if request.method == "GET":
         if meeting_id == "":
@@ -61,22 +61,32 @@ def join(meeting_id):
                 insert_command = "INSERT INTO REGISTRATION (email, name, password, meeting_code, registrant_code, admin) VALUES (?, ?, ?, ?, ?, ?)"
                 cursor.execute(insert_command, (formdata["email"], formdata["name"], passwordhash, formdata["meeting_id"], registrant_code, False))
                 connection.commit()
-                return redirect("/" + formdata["meeting_id"] + "/" + registrant_code + "/")
+                return redirect("/" + formdata["meeting_id"] + "/" + registrant_code)
             
             # meeting exists and user info is wrong
             if rows[0][0] != formdata["name"]:
                 flash("Incorrect name")
-                return redirect("/join/")
+                return redirect("/join/" + meeting_id)
             if not check_password_hash(rows[0][1], formdata["password"]):
                 flash("Incorrect password")
-                return redirect("/join/")
+                return redirect("/join/" + meeting_id)
             
             # meeting exists and this user is returning
             return redirect("/" + formdata["meeting_id"] + "/" + rows[0][2] + "/")
             
-@app.route("/<meeting_id>/<registrant_id>/")
+@app.route("/<meeting_id>/<registrant_id>")
 def get_availability(meeting_id, registrant_id):
-    return render_template("availability.html")
+    with sqlite3.connect("database.db") as connection:
+        cursor = connection.cursor()
+        meeting_search = "SELECT dates, start_time, end_time FROM MEETING WHERE code=?"
+        cursor.execute(meeting_search, (meeting_id, ))
+        rows = cursor.fetchall()
+        
+        dates = rows[0][0].split(",")
+        start_time = int(rows[0][1])
+        end_time = int(rows[0][2])
+        
+        return render_template("availability.html", dates = dates, start_time = start_time, end_time = end_time)
 
 @app.route("/<meeting_id>/")
 def get_meeting(meeting_id):
