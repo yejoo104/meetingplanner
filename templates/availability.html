@@ -5,6 +5,7 @@
 
 {% block script %}
 <script>
+    document.onmouseup=SelectStop;
     var Slot = new Array();
     var Availability = new Array();
     {% for i in range(dates_days|length) %}
@@ -43,13 +44,8 @@
         }
     }
 
-    function SelectTo(current){
-        slot = Number(current.getAttribute("data-datetime"));
-        slot_idx = Slot.indexOf(slot);
-        Availability[slot_idx] = !Availability[slot_idx];
+    function SelectStop(){
         mouseDown = false;
-        
-        ChangeColor(current);
     }
     
     function ChangeColor(current){
