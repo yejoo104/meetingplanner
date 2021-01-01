@@ -5,6 +5,17 @@
 
 {% block script %}
 <script>
+    var Slot = new Array();
+    var Availability = new Array();
+    {% for i in range(dates_days|length) %}
+        {% for j in range(start_time, end_time) %}
+        Slot[{{ 2 * i * (end_time - start_time) + 2 * (j - start_time) }}] = {{ dates_days[i][2] + j|string + "00" + j|string + "30" }};
+        Availability[{{ 2 * i * (end_time - start_time) + 2 * (j - start_time) }}] = false;
+        Slot[{{ 2 * i * (end_time - start_time) + 2 * (j - start_time) + 1 }}] = {{ dates_days[i][2] + j|string + "30" + (j + 1)|string + "00" }};
+        Availability[{{ 2 * i * (end_time - start_time) + 2 * (j - start_time) + 1 }}] = false;
+        {% endfor %}
+    {% endfor %}
+    
     function ChangeColor(current){
         current.style.background="blue";
     }
@@ -31,11 +42,11 @@
             <div>
                 {% for j in range(start_time, end_time) %}
                 <div>
-                    <div onmousedown="ChangeColor(this)"style="width: 40px; height:15px; border-left: 1px black solid; background: #f0ffff; border-top: 1px black solid; border-right: 1px black solid;"></div>
+                    <div onmousedown="ChangeColor(this)" id="{{ date_day[2] }} {{ j }}00 {{ j }}30" data-datetime="{{ date_day[2] }} {{ j }}00 {{ j }}30"style="width: 40px; height:15px; border-left: 1px black solid; background: #f0ffff; border-top: 1px black solid; border-right: 1px black solid;"></div>
                     {% if j != end_time - 1 %}
-                    <div onmousedown="ChangeColor(this)" style="width: 40px; height:15px; border-left: 1px black solid; background: #f0ffff; border-top: 1px black dotted; border-right: 1px black solid;"></div>
+                    <div onmousedown="ChangeColor(this)" id="{{ date_day[2] }} {{ j }}30 {{ j + 1 }}00" data-datetime="{{ date_day[2] }} {{ j }}30 {{ j + 1 }}00" style="width: 40px; height:15px; border-left: 1px black solid; background: #f0ffff; border-top: 1px black dotted; border-right: 1px black solid;"></div>
                     {% else %}
-                    <div onmousedown="ChangeColor(this)" id="b{{ date_day[0] }}{{ j }}" style="width: 40px; height:15px; border-left: 1px black solid; background: #f0ffff; border-top: 1px black dotted; border-right: 1px black solid; border-bottom: 1px black solid"></div>
+                    <div onmousedown="ChangeColor(this)" id="{{ date_day[2] }} {{ j }}30 {{ j + 1 }}00" data-datetime="{{ date_day[2] }} {{ j }}30 {{ j + 1 }}00" style="width: 40px; height:15px; border-left: 1px black solid; background: #f0ffff; border-top: 1px black dotted; border-right: 1px black solid; border-bottom: 1px black solid"></div>
                     {% endif %}
                 </div>
                 {% endfor %}

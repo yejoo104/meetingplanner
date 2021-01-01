@@ -96,7 +96,7 @@ def get_availability(meeting_id, registrant_id):
             month = MONTHS[int(date[0]) - 1]
             day = date[1]
             weekday = WEEKDAYS[datetime.datetime(int(date[2]), int(date[0]), int(date[1])).weekday()]
-            dates_days.append((month + " " + day, weekday))
+            dates_days.append((month + " " + day, weekday, date[2] + date[0] + date[1]))
         
         start_time = int(rows[0][1])
         end_time = int(rows[0][2])
