@@ -58,12 +58,16 @@
     }
 
     function Update(){
+        var dict = {};
+        for (i = 0; i < Availability.length; i++) {
+            dict[Slot[i].toString()] = Availability[i];
+        }
+        
         $.ajax({
             type: "POST",
             url: "/request",
-            data: JSON.stringify(Availability),
+            data: dict,
             dataType: "json",
-            contentType: "application/json",
             success: function(result){
                 alert("result=" + result);
             },

@@ -1,8 +1,9 @@
 import sqlite3
 import uuid
 import datetime
+import json
 
-from flask import Flask, render_template, request, redirect, flash, jsonify
+from flask import Flask, render_template, request, redirect, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 
 MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -105,8 +106,10 @@ def get_availability(meeting_id, registrant_id):
 
 @app.route("/request", methods=["POST"])
 def update():
-    value = request.form[0]
-    return jsonify(value)
+    value = request.form
+    print(value)
+    jsondata = json.dumps(value)
+    return jsondata
 
 @app.route("/<meeting_id>/")
 def get_meeting(meeting_id):
