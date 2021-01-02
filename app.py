@@ -2,7 +2,7 @@ import sqlite3
 import uuid
 import datetime
 
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 
 MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -76,12 +76,11 @@ def join(meeting_id):
                 return redirect("/join/" + meeting_id)
             
             # meeting exists and this user is returning
-            return redirect("/" + formdata["meeting_id"] + "/" + rows[0][2] + "/")
+            return redirect("/" + formdata["meeting_id"] + "/" + rows[0][2])
             
 @app.route("/<meeting_id>/<registrant_id>")
 def get_availability(meeting_id, registrant_id):
     with sqlite3.connect("database.db") as connection:
-    
         # Fetch this particular meeting info
         cursor = connection.cursor()
         meeting_search = "SELECT dates, start_time, end_time FROM MEETING WHERE code=?"
@@ -103,6 +102,11 @@ def get_availability(meeting_id, registrant_id):
         
         # return template
         return render_template("availability.html", dates_days = dates_days, start_time = start_time, end_time = end_time)
+
+@app.route("/request", methods=["POST"])
+def update():
+    value = request.form[0]
+    return jsonify(value)
 
 @app.route("/<meeting_id>/")
 def get_meeting(meeting_id):

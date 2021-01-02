@@ -56,6 +56,23 @@
             current.style.background="#f0ffff";
         }
     }
+
+    function Update(){
+        $.ajax({
+            type: "POST",
+            url: "/request",
+            data: JSON.stringify(Availability),
+            dataType: "json",
+            contentType: "application/json",
+            success: function(result){
+                alert("result=" + result);
+            },
+            error: function(xtr, status, error){
+                alert(xtr + ":" + status + ":" + error);
+                alert(xtr.responseText);
+            }
+        });
+    }
 </script>
 {% endblock %}
 
@@ -92,4 +109,5 @@
         {% endfor %}
     </div>
 </div>
+<button type="button" class="btn btn-primary" onclick="Update()">Update Availability</button>
 {% endblock %}
