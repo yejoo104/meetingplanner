@@ -137,11 +137,11 @@ def update(meeting_id, registrant_id):
             for i in range(start_time, end_time):
                 slot1 = date + str(i) + "00" + str(i) + "30"
                 slot2 = date + str(i) + "30" + str(i + 1) + "00"
-                availability = availability + slot1 + ":" + request.form[slot1] + ", " + slot2 + ":" + request.form[slot2] + ", "
+                availability = availability + slot1 + ":" + request.form[slot1] + "," + slot2 + ":" + request.form[slot2] + ","
         
         # Add availability string to database
         add_availability = "UPDATE REGISTRATION SET availability=? WHERE meeting_code=? AND registrant_code=?"
-        cursor.execute(add_availability, (availability[:-2], meeting_id, registrant_id))
+        cursor.execute(add_availability, (availability[:-1], meeting_id, registrant_id))
     
     return json.dumps([""])
 
