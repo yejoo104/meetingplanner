@@ -69,7 +69,8 @@
             data: dict,
             dataType: "json",
             success: function(result){
-                alert("result=" + result);
+                alert("Your availability has been updated");
+                window.location.href = "{{ "/" + meeting_id + "/" + registrant_id }}";
             },
             error: function(xtr, status, error){
                 alert(xtr + ":" + status + ":" + error);

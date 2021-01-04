@@ -101,8 +101,21 @@ def get_availability(meeting_id, registrant_id):
         start_time = int(rows[0][1])
         end_time = int(rows[0][2])
         
+        # Fetch availability info
+        availability_search = "SELECT availability FROM REGISTRATION WHERE meeting_code=? AND registrant_code=?"
+        cursor.execute(availability_search, (meeting_id, registrant_id))
+        rows = cursor.fetchall()
+        availability = rows[0][0]
+        
+        # Modify avilability string into array
+        availability = availability.split(",")
+        availability_dict = {}
+        for a in availability:
+            a = a.split(":")
+            availability_dict[a[0]] = True if a[1] == "true" else False
+        
         # return template
-        return render_template("availability.html", dates_days = dates_days, start_time = start_time, end_time = end_time, meeting_id = meeting_id, registrant_id = registrant_id)
+        return render_template("availability.html", dates_days = dates_days, start_time = start_time, end_time = end_time, meeting_id = meeting_id, registrant_id = registrant_id, availability = availability_dict)
 
 @app.route("/request/<meeting_id>/<registrant_id>", methods=["POST"])
 def update(meeting_id, registrant_id):
