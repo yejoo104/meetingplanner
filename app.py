@@ -102,14 +102,23 @@ def get_availability(meeting_id, registrant_id):
         end_time = int(rows[0][2])
         
         # return template
-        return render_template("availability.html", dates_days = dates_days, start_time = start_time, end_time = end_time)
+        return render_template("availability.html", dates_days = dates_days, start_time = start_time, end_time = end_time, meeting_id = meeting_id, registrant_id = registrant_id)
 
-@app.route("/request", methods=["POST"])
-def update():
-    value = request.form
-    print(value)
-    jsondata = json.dumps(value)
-    return jsondata
+@app.route("/request/<meeting_id>/<registrant_id>", methods=["POST"])
+def update(meeting_id, registrant_id):
+    with sqlite3.connect("database.db") as connection:
+        cursor = connection.cursor()
+        
+        # Find meeting
+        meeting_search = "SELECT dates, start_time, end_time FROM MEETING WHERE code=?"
+        cursor.execute(meeting_search, (meeting_id, ))
+        rows = cursor.fetchall()
+        
+        # Turn availability into string
+        
+        # Add availability string to database
+    
+    return json.dumps([""])
 
 @app.route("/<meeting_id>/")
 def get_meeting(meeting_id):

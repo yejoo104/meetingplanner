@@ -65,7 +65,7 @@
         
         $.ajax({
             type: "POST",
-            url: "/request",
+            url: "{{ "/request/" + meeting_id + "/" + registrant_id }}",
             data: dict,
             dataType: "json",
             success: function(result){
