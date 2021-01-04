@@ -115,8 +115,20 @@ def update(meeting_id, registrant_id):
         rows = cursor.fetchall()
         
         # Turn availability into string
+        availability = ""
+        dates = rows[0][0].split(",")
+        dates = [date[6:] + date[:6].replace("/", "") for date in dates]
+        start_time = int(rows[0][1])
+        end_time = int(rows[0][2])
+        for date in dates:
+            for i in range(start_time, end_time):
+                slot1 = date + str(i) + "00" + str(i) + "30"
+                slot2 = date + str(i) + "30" + str(i + 1) + "00"
+                availability = availability + slot1 + ":" + request.form[slot1] + ", " + slot2 + ":" + request.form[slot2] + ", "
         
         # Add availability string to database
+        add_availability = "UPDATE REGISTRATION SET availability=? WHERE meeting_code=? AND registrant_code=?"
+        cursor.execute(add_availability, (availability[:-2], meeting_id, registrant_id))
     
     return json.dumps([""])
 
