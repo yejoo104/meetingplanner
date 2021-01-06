@@ -145,6 +145,6 @@ def update(meeting_id, registrant_id):
     
     return json.dumps([""])
 
-@app.route("/<meeting_id>/")
+@app.route("/<meeting_id>")
 def get_meeting(meeting_id):
-    return str(meeting_id)
+    return render_template("admin.html", code = meeting_id)
