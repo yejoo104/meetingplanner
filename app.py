@@ -160,7 +160,14 @@ def login(meeting_id):
         if not check_password_hash(rows[0][0], pw):
             flash("Incorrect password for the meeting")
             return redirect("/" + meeting_id + "/")
+        
+        else:
+            return redirect("/" + meeting_id + "/logged")
 
 @app.route("/<meeting_id>/")
-def get_meeting(meeting_id):
-    return render_template("admin.html", code = meeting_id)
+def get_meeting_login(meeting_id):
+    return render_template("admin.html", code = meeting_id, logged = False)
+
+@app.route("/<meeting_id>/logged")
+def get_meeting_info(meeting_id):
+    return render_template("admin.html", code = meeting_id, logged = True)

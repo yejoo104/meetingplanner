@@ -5,9 +5,11 @@
 
 {% block script %}
 <script>
+    {% if not logged %}
     $(document).ready(function(){
         $("#passwordModal").modal('show');
     });
+    {% endif %}
 </script>
 {% endblock %}
 
@@ -17,7 +19,6 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div>Enter Meeting Password</div>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <form method="post" action="/login/{{ code }}">
                 <div class="modal-body">
