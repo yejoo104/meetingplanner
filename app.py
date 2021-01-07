@@ -145,6 +145,22 @@ def update(meeting_id, registrant_id):
     
     return json.dumps([""])
 
-@app.route("/<meeting_id>")
+@app.route("/login/<meeting_id>", methods=["POST"])
+def login(meeting_id):
+    pw = request.form["password"]
+    with sqlite3.connect("database.db") as connection:
+        cursor = connection.cursor()
+        
+        # Find meeting password
+        meeting_search = "SELECT password FROM MEETING WHERE code=?"
+        cursor.execute(meeting_search, (meeting_id, ))
+        rows = cursor.fetchall()
+        
+        # Redirect & flash error message if wrong password
+        if not check_password_hash(rows[0][0], pw):
+            flash("Incorrect password for the meeting")
+            return redirect("/" + meeting_id + "/")
+
+@app.route("/<meeting_id>/")
 def get_meeting(meeting_id):
     return render_template("admin.html", code = meeting_id)
