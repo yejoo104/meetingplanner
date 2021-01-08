@@ -166,8 +166,30 @@ def login(meeting_id):
 
 @app.route("/<meeting_id>/")
 def get_meeting_login(meeting_id):
-    return render_template("admin.html", code = meeting_id, logged = False)
+    return render_template("admin.html", code = meeting_id, logged = False, dates_days = [], start_time = 0, end_time = 0)
 
 @app.route("/<meeting_id>/logged")
 def get_meeting_info(meeting_id):
-    return render_template("admin.html", code = meeting_id, logged = True)
+    with sqlite3.connect("database.db") as connection:
+        cursor = connection.cursor()
+        
+        # Fetch meeting info
+        meeting_search = "SELECT dates, start_time, end_time FROM MEETING WHERE code=?"
+        cursor.execute(meeting_search, (meeting_id, ))
+        rows = cursor.fetchall()
+        
+        # Modify meeting info
+        dates = rows[0][0].split(",")
+        dates_days = []
+        for date in dates:
+            date = date.split("/")
+            month = MONTHS[int(date[0]) - 1]
+            day = date[1]
+            weekday = WEEKDAYS[datetime.datetime(int(date[2]), int(date[0]), int(date[1])).weekday()]
+            dates_days.append((month + " " + day, weekday, date[2] + date[0] + date[1]))
+        
+        start_time = int(rows[0][1])
+        end_time = int(rows[0][2])
+        
+    
+    return render_template("admin.html", code = meeting_id, logged = True, dates_days = dates_days, start_time = start_time, end_time = end_time)
