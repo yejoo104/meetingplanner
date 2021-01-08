@@ -3,7 +3,9 @@ import uuid
 import datetime
 import json
 
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, session
+from flask_session import Session
+from tempfile import mkdtemp
 from werkzeug.security import generate_password_hash, check_password_hash
 
 MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -12,8 +14,15 @@ WEEKDAYS = ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"]
 app = Flask(__name__)
 app.secret_key = 'eicdfwi375pfme3795e93bco3854uf'
 
+# Configure session to use filesystem
+app.config["SESSION_FILE_DIR"] = mkdtemp()
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
+
 @app.route("/", methods=["GET", "POST"])
 def plannerhome():
+    session.clear()
     if request.method == "GET":
         return render_template("home.html")
     if request.method == "POST":
@@ -35,6 +44,7 @@ def plannerhome():
 @app.route("/join/", defaults={'meeting_id': ''}, methods=["GET", "POST"])
 @app.route("/join/<meeting_id>", methods=["GET", "POST"])
 def join(meeting_id):
+    session.clear()
     if request.method == "GET":
         if meeting_id == "":
             return render_template("join.html")
@@ -147,6 +157,7 @@ def update(meeting_id, registrant_id):
 
 @app.route("/login/<meeting_id>", methods=["POST"])
 def login(meeting_id):
+    session.clear()
     pw = request.form["password"]
     with sqlite3.connect("database.db") as connection:
         cursor = connection.cursor()
@@ -162,34 +173,38 @@ def login(meeting_id):
             return redirect("/" + meeting_id + "/")
         
         else:
-            return redirect("/" + meeting_id + "/logged")
+            session["meeting_id"] = meeting_id
+            return redirect("/" + meeting_id + "/")
 
 @app.route("/<meeting_id>/")
-def get_meeting_login(meeting_id):
-    return render_template("admin.html", code = meeting_id, logged = False, dates_days = [], start_time = 0, end_time = 0)
-
-@app.route("/<meeting_id>/logged")
-def get_meeting_info(meeting_id):
-    with sqlite3.connect("database.db") as connection:
-        cursor = connection.cursor()
-        
-        # Fetch meeting info
-        meeting_search = "SELECT dates, start_time, end_time FROM MEETING WHERE code=?"
-        cursor.execute(meeting_search, (meeting_id, ))
-        rows = cursor.fetchall()
-        
-        # Modify meeting info
-        dates = rows[0][0].split(",")
-        dates_days = []
-        for date in dates:
-            date = date.split("/")
-            month = MONTHS[int(date[0]) - 1]
-            day = date[1]
-            weekday = WEEKDAYS[datetime.datetime(int(date[2]), int(date[0]), int(date[1])).weekday()]
-            dates_days.append((month + " " + day, weekday, date[2] + date[0] + date[1]))
-        
-        start_time = int(rows[0][1])
-        end_time = int(rows[0][2])
-        
+def get_meeting(meeting_id):
     
-    return render_template("admin.html", code = meeting_id, logged = True, dates_days = dates_days, start_time = start_time, end_time = end_time)
+    # Meeting admin is not logged in or logged in to another meeting
+    if not session or session["meeting_id"] != meeting_id:
+        return render_template("admin.html", code = meeting_id, logged = False, dates_days = [], start_time = 0, end_time = 0)
+
+    # Meeting admin is logged in
+    else:
+        with sqlite3.connect("database.db") as connection:
+            cursor = connection.cursor()
+            
+            # Fetch meeting info
+            meeting_search = "SELECT dates, start_time, end_time FROM MEETING WHERE code=?"
+            cursor.execute(meeting_search, (meeting_id, ))
+            rows = cursor.fetchall()
+            
+            # Modify meeting info
+            dates = rows[0][0].split(",")
+            dates_days = []
+            for date in dates:
+                date = date.split("/")
+                month = MONTHS[int(date[0]) - 1]
+                day = date[1]
+                weekday = WEEKDAYS[datetime.datetime(int(date[2]), int(date[0]), int(date[1])).weekday()]
+                dates_days.append((month + " " + day, weekday, date[2] + date[0] + date[1]))
+            
+            start_time = int(rows[0][1])
+            end_time = int(rows[0][2])
+            
+        
+        return render_template("admin.html", code = meeting_id, logged = True, dates_days = dates_days, start_time = start_time, end_time = end_time)
