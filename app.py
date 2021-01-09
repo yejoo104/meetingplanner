@@ -169,6 +169,7 @@ def login(meeting_id):
         
         # Redirect & flash error message if wrong password
         if not check_password_hash(rows[0][0], pw):
+            session["meeting_id"] = ""
             flash("Incorrect password for the meeting")
             return redirect("/" + meeting_id + "/")
         
@@ -178,7 +179,6 @@ def login(meeting_id):
 
 @app.route("/<meeting_id>/")
 def get_meeting(meeting_id):
-    
     # Meeting admin is not logged in or logged in to another meeting
     if not session or session["meeting_id"] != meeting_id:
         return render_template("admin.html", code = meeting_id, logged = False, dates_days = [], start_time = 0, end_time = 0)
