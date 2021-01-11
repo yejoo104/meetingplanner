@@ -182,7 +182,7 @@ def login(meeting_id):
 def get_meeting(meeting_id):
     # Meeting admin is not logged in or logged in to another meeting
     if not session or session["meeting_id"] != meeting_id:
-        return render_template("admin.html", code = meeting_id, logged = False, dates_days = [], start_time = 0, end_time = 0, registrant_dict = {})
+        return render_template("admin.html", code = meeting_id, logged = False, dates_days = [], start_time = 0, end_time = 0, dict = {})
 
     # Meeting admin is logged in
     else:
@@ -224,5 +224,14 @@ def get_meeting(meeting_id):
                 registrant_dict[registrant[0]] = available_slots
             
             # Create a dict where keys are timeslots and values are a list of available people
+            dict = {}
+            for date in dates_days:
+                for time in range(start_time, end_time):
+                    for slot in [date[2] + str(time) + "00" + str(time) + "30", date[2] + str(time) + "30" + str(time + 1) + "00"]:
+                        slot_ppl = []
+                        for registrant in registrant_dict:
+                            if slot in registrant_dict[registrant]:
+                                slot_ppl.append(registrant)
+                        dict[slot] = slot_ppl
         
-        return render_template("admin.html", code = meeting_id, logged = True, dates_days = dates_days, start_time = start_time, end_time = end_time, registrant_dict=registrant_dict)
+        return render_template("admin.html", code = meeting_id, logged = True, dates_days = dates_days, start_time = start_time, end_time = end_time, dict=dict)
