@@ -73,8 +73,8 @@ def join(meeting_id):
             if len(rows) == 0:
                 registrant_code = str(uuid.uuid4())
                 passwordhash = generate_password_hash(formdata["password"])
-                insert_command = "INSERT INTO REGISTRATION (email, name, password, meeting_code, registrant_code, admin) VALUES (?, ?, ?, ?, ?, ?)"
-                cursor.execute(insert_command, (formdata["email"], formdata["name"], passwordhash, formdata["meeting_id"], registrant_code, False))
+                insert_command = "INSERT INTO REGISTRATION (email, name, password, meeting_code, registrant_code) VALUES (?, ?, ?, ?, ?)"
+                cursor.execute(insert_command, (formdata["email"], formdata["name"], passwordhash, formdata["meeting_id"], registrant_code))
                 connection.commit()
                 return redirect("/" + formdata["meeting_id"] + "/" + registrant_code)
             
@@ -117,12 +117,13 @@ def get_availability(meeting_id, registrant_id):
         rows = cursor.fetchall()
         availability = rows[0][0]
         
-        # Modify avilability string into array
-        availability = availability.split(",")
+        # Modify avilability string into array, if info exists
         availability_dict = {}
-        for a in availability:
-            a = a.split(":")
-            availability_dict[a[0]] = True if a[1] == "true" else False
+        if availability:
+            availability = availability.split(",")
+            for a in availability:
+                a = a.split(":")
+                availability_dict[a[0]] = True if a[1] == "true" else False
         
         # return template
         return render_template("availability.html", dates_days = dates_days, start_time = start_time, end_time = end_time, meeting_id = meeting_id, registrant_id = registrant_id, availability = availability_dict)
@@ -181,7 +182,7 @@ def login(meeting_id):
 def get_meeting(meeting_id):
     # Meeting admin is not logged in or logged in to another meeting
     if not session or session["meeting_id"] != meeting_id:
-        return render_template("admin.html", code = meeting_id, logged = False, dates_days = [], start_time = 0, end_time = 0)
+        return render_template("admin.html", code = meeting_id, logged = False, dates_days = [], start_time = 0, end_time = 0, registrant_dict = {})
 
     # Meeting admin is logged in
     else:
@@ -206,5 +207,22 @@ def get_meeting(meeting_id):
             start_time = int(rows[0][1])
             end_time = int(rows[0][2])
             
+            # Fetch info about those who marked their availability
+            registrant_search = "SELECT name, availability FROM registration WHERE meeting_code=?"
+            cursor.execute(registrant_search, (meeting_id, ))
+            registrants = cursor.fetchall()
+            
+            # Create a registrant_dict where keys are people's names and values are a list of available slots
+            registrant_dict = {}
+            for registrant in registrants:
+                slots = registrant[1].split(",")
+                available_slots = []
+                for slot in slots:
+                    stringsplit = slot.split(":")
+                    if stringsplit[1] == "true":
+                        available_slots.append(stringsplit[0])
+                registrant_dict[registrant[0]] = available_slots
+            
+            # Create a dict where keys are timeslots and values are a list of available people
         
-        return render_template("admin.html", code = meeting_id, logged = True, dates_days = dates_days, start_time = start_time, end_time = end_time)
+        return render_template("admin.html", code = meeting_id, logged = True, dates_days = dates_days, start_time = start_time, end_time = end_time, registrant_dict=registrant_dict)

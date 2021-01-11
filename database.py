@@ -27,12 +27,11 @@ cursor.execute(meeting_command)
 # Command for creating registration table
 registration_command = """CREATE TABLE REGISTRATION (
 email TEXT NOT NULL,
-name TEXT,
+name TEXT NOT NULL,
 password TEXT NOT NULL,
 availability TEXT,
 meeting_code TEXT NOT NULL,
-registrant_code TEXT NOT NULL,
-admin BOOL NOT NULL);"""
+registrant_code TEXT NOT NULL);"""
 
 cursor.execute(registration_command)
 
