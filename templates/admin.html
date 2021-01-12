@@ -39,9 +39,14 @@
         {% endfor %}
     };
         
-    function ShowSlotAvailability(element){
+    function ShowSlotAvailability(current){
         var element = document.getElementById("slotavailability");
         element.style.display = '';
+    };
+    
+    function HideSlotAvailability(){
+        var element = document.getElementById("slotavailability");
+        element.style.display = 'none';
     }
 </script>
 {% endblock %}
@@ -100,8 +105,8 @@
             <div>
                 {% for j in range(start_time, end_time) %}
                 <div>
-                    <div id="{{ date_day[2] }}{{ j }}00{{ j }}30" data-datetime="{{ date_day[2] }}{{ j }}00{{ j }}30" onmouseover="ShowSlotAvailability(this)" style="width: 40px; height:15px; border-left: 1px black solid; background: #ffffff; border-top: 1px black solid; border-right: 1px black solid;"></div>
-                    <div id="{{ date_day[2] }}{{ j }}30{{ j + 1 }}00" data-datetime="{{ date_day[2] }}{{ j }}30{{ j + 1 }}00" onmouseover="ShowSlotAvailability(this)" style="width: 40px; height:15px; border-left: 1px black solid; background: #ffffff ; border-top: 1px black dotted; border-right: 1px black solid; {% if j == end_time - 1 %} border-bottom: 1px black solid {% endif %}"></div>
+                    <div id="{{ date_day[2] }}{{ j }}00{{ j }}30" data-datetime="{{ date_day[2] }}{{ j }}00{{ j }}30" onmouseover="ShowSlotAvailability(this)" onmouseout="HideSlotAvailability()" style="width: 40px; height:15px; border-left: 1px black solid; background: #ffffff; border-top: 1px black solid; border-right: 1px black solid;"></div>
+                    <div id="{{ date_day[2] }}{{ j }}30{{ j + 1 }}00" data-datetime="{{ date_day[2] }}{{ j }}30{{ j + 1 }}00" onmouseover="ShowSlotAvailability(this)" onmouseout="HideSlotAvailability()" style="width: 40px; height:15px; border-left: 1px black solid; background: #ffffff ; border-top: 1px black dotted; border-right: 1px black solid; {% if j == end_time - 1 %} border-bottom: 1px black solid {% endif %}"></div>
                 </div>
                 {% endfor %}
             </div>

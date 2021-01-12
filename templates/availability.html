@@ -26,8 +26,6 @@
     {% endfor %}
     
     var mouseDown = false;
-    var toRow = -1;
-    var fromRow = -1;
     var changeToAvailable=false;
     
     window.onload = function(){
@@ -52,8 +50,6 @@
         Availability[slot_idx] = !Availability[slot_idx];
         mouseDown = true;
         
-        toRow = Number(current.getAttribute("data-row"));
-        fromRow = toRow;
         ChangeColor(current);
     }
 
@@ -62,7 +58,6 @@
             slot = Number(current.getAttribute("data-datetime"));
             slot_idx = Slot.indexOf(slot);
             Availability[slot_idx] = !Availability[slot_idx];
-            toRow = Number(current.getAttribute("data-row"));
             ChangeColor(current);
         }
     }
@@ -124,8 +119,8 @@
             <div>
                 {% for j in range(start_time, end_time) %}
                 <div>
-                    <div onmousedown="SelectFrom(this)" onmouseover="SelectThrough(this)" id="{{ date_day[2] }}{{ j }}00{{ j }}30" onmouseup="SelectTo(this)" data-datetime="{{ date_day[2] }}{{ j }}00{{ j }}30" data-row="{{ 2 * (j - start_time) }}" style="width: 40px; height:15px; border-left: 1px black solid; background: #f0ffff; border-top: 1px black solid; border-right: 1px black solid;"></div>
-                    <div onmousedown="SelectFrom(this)" onmouseover="SelectThrough(this)" onmouseup="SelectTo(this)" id="{{ date_day[2] }}{{ j }}30{{ j + 1 }}00" data-datetime="{{ date_day[2] }}{{ j }}30{{ j + 1 }}00" data-row="{{ 2 * (j - start_time) + 1 }}" style="width: 40px; height:15px; border-left: 1px black solid; background: #f0ffff ; border-top: 1px black dotted; border-right: 1px black solid; {% if j == end_time - 1 %} border-bottom: 1px black solid {% endif %}"></div>
+                    <div onmousedown="SelectFrom(this)" onmouseover="SelectThrough(this)" id="{{ date_day[2] }}{{ j }}00{{ j }}30" onmouseup="SelectTo(this)" data-datetime="{{ date_day[2] }}{{ j }}00{{ j }}30" style="width: 40px; height:15px; border-left: 1px black solid; background: #f0ffff; border-top: 1px black solid; border-right: 1px black solid;"></div>
+                    <div onmousedown="SelectFrom(this)" onmouseover="SelectThrough(this)" onmouseup="SelectTo(this)" id="{{ date_day[2] }}{{ j }}30{{ j + 1 }}00" data-datetime="{{ date_day[2] }}{{ j }}30{{ j + 1 }}00" style="width: 40px; height:15px; border-left: 1px black solid; background: #f0ffff ; border-top: 1px black dotted; border-right: 1px black solid; {% if j == end_time - 1 %} border-bottom: 1px black solid {% endif %}"></div>
                 </div>
                 {% endfor %}
             </div>
