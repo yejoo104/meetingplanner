@@ -26,9 +26,9 @@
 
     function AvailabilityScale(){
         var i;
-        for (i = 0; i < 7; i++){
+        for (i = 0; i < {{ people|length + 1 }}; i++){
             var element = document.getElementById("colorscale" + i.toString());
-            element.style.background = colorscale(i / 7);
+            element.style.background = colorscale(i / {{ people|length }});
         }
     };
                                                   
@@ -77,15 +77,15 @@
 </div>
 <div class="container" {% if not logged %} style="visibility: hidden;" {% endif %}>
     <div class="row" style="margin-top:10px; margin-bottom: 10px;">
-        <div style="font-size:10px; margin-top:3px; margin-right: 3px;">0/6 available</div>
+        <div style="font-size:10px; margin-top:3px; margin-right: 3px;">0/{{ people|length }} available</div>
         <table id="table" width=100 height=10 cellpadding=0 cellspacing=0 style="border: solid 1px black">
             <tr>
-                {% for i in range(7) %}
+                {% for i in range(people|length + 1) %}
                 <td><div id="colorscale{{i}}">&nbsp;</div></td>
                 {% endfor %}
             </tr>
         </table>
-        <div style="font-size: 10px; margin-top: 3px; margin-left: 3px;">6/6 available</div>
+        <div style="font-size: 10px; margin-top: 3px; margin-left: 3px;">{{ people|length }}/{{ people|length }} available</div>
     </div>
     <div class="row">
         <div class="column">
