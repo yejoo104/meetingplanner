@@ -35,8 +35,13 @@
     function AvailabilityChart(){
         {% for slot in dict %}
         var element = document.getElementById({{ slot }});
-        element.style.background = colorscale({{ dict[slot]|length / people }});
+        element.style.background = colorscale({{ dict[slot]|length / people|length }});
         {% endfor %}
+    };
+        
+    function ShowSlotAvailability(element){
+        var element = document.getElementById("slotavailability");
+        element.style.display = '';
     }
 </script>
 {% endblock %}
@@ -95,14 +100,32 @@
             <div>
                 {% for j in range(start_time, end_time) %}
                 <div>
-                    <div id="{{ date_day[2] }}{{ j }}00{{ j }}30" data-datetime="{{ date_day[2] }}{{ j }}00{{ j }}30" data-row="{{ 2 * (j - start_time) }}" style="width: 40px; height:15px; border-left: 1px black solid; background: #ffffff; border-top: 1px black solid; border-right: 1px black solid;"></div>
-                    <div id="{{ date_day[2] }}{{ j }}30{{ j + 1 }}00" data-datetime="{{ date_day[2] }}{{ j }}30{{ j + 1 }}00" data-row="{{ 2 * (j - start_time) + 1 }}" style="width: 40px; height:15px; border-left: 1px black solid; background: #ffffff ; border-top: 1px black dotted; border-right: 1px black solid; {% if j == end_time - 1 %} border-bottom: 1px black solid {% endif %}"></div>
+                    <div id="{{ date_day[2] }}{{ j }}00{{ j }}30" data-datetime="{{ date_day[2] }}{{ j }}00{{ j }}30" onmouseover="ShowSlotAvailability(this)" style="width: 40px; height:15px; border-left: 1px black solid; background: #ffffff; border-top: 1px black solid; border-right: 1px black solid;"></div>
+                    <div id="{{ date_day[2] }}{{ j }}30{{ j + 1 }}00" data-datetime="{{ date_day[2] }}{{ j }}30{{ j + 1 }}00" onmouseover="ShowSlotAvailability(this)" style="width: 40px; height:15px; border-left: 1px black solid; background: #ffffff ; border-top: 1px black dotted; border-right: 1px black solid; {% if j == end_time - 1 %} border-bottom: 1px black solid {% endif %}"></div>
                 </div>
                 {% endfor %}
             </div>
         </div>
         {% endfor %}
     </div>
+</div>
+<div id="slotavailability" style="display: none;">
+    <div id="num_available"></div>
+    <div id="time"></div>
+    <table>
+        <tr>
+            <td width=200 align=center>Available</td>
+            <td width=200 align=center>Unavailable</td>
+        </tr>
+        <tr>
+            <td valign=top align=center>
+                <div id="availlable_names"></div>
+            </td>
+            <td valign=top align=center>
+                <div id="unavailable_names"></div>
+            </td>
+        </tr>
+    </table>
 </div>
 {% with messages = get_flashed_messages() %}
     {% if messages %}
