@@ -182,7 +182,7 @@ def login(meeting_id):
 def get_meeting(meeting_id):
     # Meeting admin is not logged in or logged in to another meeting
     if not session or session["meeting_id"] != meeting_id:
-        return render_template("admin.html", code = meeting_id, logged = False, dates_days = [], start_time = 0, end_time = 0, dict = {})
+        return render_template("admin.html", code = meeting_id, logged = False, dates_days = [], start_time = 0, end_time = 0, dict = {}, people = 0)
 
     # Meeting admin is logged in
     else:
@@ -234,4 +234,4 @@ def get_meeting(meeting_id):
                                 slot_ppl.append(registrant)
                         dict[slot] = slot_ppl
         
-        return render_template("admin.html", code = meeting_id, logged = True, dates_days = dates_days, start_time = start_time, end_time = end_time, dict=dict)
+        return render_template("admin.html", code = meeting_id, logged = True, dates_days = dates_days, start_time = start_time, end_time = end_time, dict=dict, people=len(registrant_dict))

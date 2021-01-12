@@ -21,6 +21,7 @@
     
     window.onload = function(){
         AvailabilityScale();
+        AvailabilityChart();
     }
 
     function AvailabilityScale(){
@@ -29,6 +30,13 @@
             var element = document.getElementById("colorscale" + i.toString());
             element.style.background = colorscale(i / 7);
         }
+    };
+                                                  
+    function AvailabilityChart(){
+        {% for slot in dict %}
+        var element = document.getElementById({{ slot }});
+        element.style.background = colorscale({{ dict[slot]|length / people }});
+        {% endfor %}
     }
 </script>
 {% endblock %}
@@ -96,7 +104,6 @@
         {% endfor %}
     </div>
 </div>
-<div>{{ dict }}</div>
 {% with messages = get_flashed_messages() %}
     {% if messages %}
         {% for message in messages %}
