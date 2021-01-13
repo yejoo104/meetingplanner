@@ -123,62 +123,69 @@
         </div>
     </div>
 </div>
-<div class="container" {% if not logged %} style="visibility: hidden;" {% endif %}>
-    <div class="row" style="margin-top:10px; margin-bottom: 10px;">
-        <div style="font-size:10px; margin-top:3px; margin-right: 3px;">0/{{ people|length }} available</div>
-        <table id="table" width=100 height=10 cellpadding=0 cellspacing=0 style="border: solid 1px black">
-            <tr>
-                {% for i in range(people|length + 1) %}
-                <td><div id="colorscale{{i}}">&nbsp;</div></td>
-                {% endfor %}
-            </tr>
-        </table>
-        <div style="font-size: 10px; margin-top: 3px; margin-left: 3px;">{{ people|length }}/{{ people|length }} available</div>
-    </div>
-    <div class="row">
-        <div class="column">
-            <div style="width:40px; height: 24px;"></div>
-            {% for i in range(start_time, end_time + 1) %}
-            <div style="width: 40px; height: 30px; font-size:10px;">{{ i }}: 00</div>
-            {% endfor %}
-        </div>
-        {% for date_day in dates_days %}
-        <div class="column" style="width: 45px;">
-            <div style="height: 13px; font-size: 11px; text-align: center;">
-                {{ date_day[0] }}
+
+<div class="row">
+    <div class="col-sm">
+        <div class="container" align=center {% if not logged %} style="visibility: hidden;" {% endif %}>
+            <div class="row" style="margin-top:10px; margin-bottom: 10px;">
+                <div style="font-size:10px; margin-top:3px; margin-right: 3px;">0/{{ people|length }} available</div>
+                <table id="table" width=100 height=10 cellpadding=0 cellspacing=0 style="border: solid 1px black">
+                    <tr>
+                        {% for i in range(people|length + 1) %}
+                        <td><div id="colorscale{{i}}">&nbsp;</div></td>
+                        {% endfor %}
+                    </tr>
+                </table>
+                <div style="font-size: 10px; margin-top: 3px; margin-left: 3px;">{{ people|length }}/{{ people|length }} available</div>
             </div>
-            <div style="height: 17px; font-size: 11px; text-align: center;">
-                {{ date_day[1] }}
-            </div>
-            <div>
-                {% for j in range(start_time, end_time) %}
-                <div>
-                    <div id="{{ date_day[2] }}{{ j }}00{{ j }}30" data-datetime="{{ date_day[2] }}{{ j }}00{{ j }}30" onmouseover="ShowSlotAvailability(this)" onmouseout="HideSlotAvailability()" style="width: 40px; height:15px; border-left: 1px black solid; background: #ffffff; border-top: 1px black solid; border-right: 1px black solid;"></div>
-                    <div id="{{ date_day[2] }}{{ j }}30{{ j + 1 }}00" data-datetime="{{ date_day[2] }}{{ j }}30{{ j + 1 }}00" onmouseover="ShowSlotAvailability(this)" onmouseout="HideSlotAvailability()" style="width: 40px; height:15px; border-left: 1px black solid; background: #ffffff ; border-top: 1px black dotted; border-right: 1px black solid; {% if j == end_time - 1 %} border-bottom: 1px black solid {% endif %}"></div>
+            <div class="row">
+                <div class="column">
+                    <div style="width:40px; height: 24px;"></div>
+                    {% for i in range(start_time, end_time + 1) %}
+                    <div style="width: 40px; height: 30px; font-size:10px;">{{ i }}: 00</div>
+                    {% endfor %}
+                </div>
+                {% for date_day in dates_days %}
+                <div class="column" style="width: 45px;">
+                    <div style="height: 13px; font-size: 11px; text-align: center;">
+                        {{ date_day[0] }}
+                    </div>
+                    <div style="height: 17px; font-size: 11px; text-align: center;">
+                        {{ date_day[1] }}
+                    </div>
+                    <div>
+                        {% for j in range(start_time, end_time) %}
+                        <div>
+                            <div id="{{ date_day[2] }}{{ j }}00{{ j }}30" data-datetime="{{ date_day[2] }}{{ j }}00{{ j }}30" onmouseover="ShowSlotAvailability(this)" onmouseout="HideSlotAvailability()" style="width: 40px; height:15px; border-left: 1px black solid; background: #ffffff; border-top: 1px black solid; border-right: 1px black solid;"></div>
+                            <div id="{{ date_day[2] }}{{ j }}30{{ j + 1 }}00" data-datetime="{{ date_day[2] }}{{ j }}30{{ j + 1 }}00" onmouseover="ShowSlotAvailability(this)" onmouseout="HideSlotAvailability()" style="width: 40px; height:15px; border-left: 1px black solid; background: #ffffff ; border-top: 1px black dotted; border-right: 1px black solid; {% if j == end_time - 1 %} border-bottom: 1px black solid {% endif %}"></div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
                 {% endfor %}
             </div>
         </div>
-        {% endfor %}
+        <div id="slotavailability" style="display: none;">
+            <div id="num_available" style="text-align: center; font-size: 13px;"></div>
+            <div id="time" style="text-align: center; font-size: 11px;"></div>
+            <table>
+                <tr>
+                    <td width=200 align=center style="font-size: 12px;"><b><u>Available</u></b></td>
+                    <td width=200 align=center style="font-size: 12px;"><b><u>Unavailable</u></b></td>
+                </tr>
+                <tr>
+                    <td valign=top align=center>
+                        <div id="available_names" style="text-align: center; font-size: 11px;"></div>
+                    </td>
+                    <td valign=top align=center>
+                        <div id="unavailable_names" style="text-align: center; font-size: 11px;"></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
-</div>
-<div id="slotavailability" style="display: none;">
-    <div id="num_available"></div>
-    <div id="time"></div>
-    <table>
-        <tr>
-            <td width=200 align=center>Available</td>
-            <td width=200 align=center>Unavailable</td>
-        </tr>
-        <tr>
-            <td valign=top align=center>
-                <div id="available_names"></div>
-            </td>
-            <td valign=top align=center>
-                <div id="unavailable_names"></div>
-            </td>
-        </tr>
-    </table>
+    <div class="col-sm"></div>
+    <div class="col-sm"></div>
 </div>
 {% with messages = get_flashed_messages() %}
     {% if messages %}
