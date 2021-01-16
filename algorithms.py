@@ -9,8 +9,9 @@ def modify_slots(meeting_length, slot_dict, dates, start_time, end_time):
     @param start_time (int): starting time
     @param end_time (int): ending time
     
-    @returns modified_slot_dict (dict): dictionary where keys are slots (indicated by starting time) -- for the length of the meeting_length -- and values are list of names available in that slot
+    @returns modified_slot_dict (dict): dictionary where keys are slots (indicated by starting time) -- for the length of the meeting_length -- and values are set of names available in that slot
     """
+    modified_slot_dict = {}
     
     # Turn meeting_length into number of slots
     num_slots = meeting_length // 30
@@ -20,6 +21,20 @@ def modify_slots(meeting_length, slot_dict, dates, start_time, end_time):
         for time in range(start_time, end_time):
             for timeslot in [str(time) + "00" + str(time) + "30", str(time) + "30" + str(time + 1) + "00"]:
                 slot_id = date + timeslot
+                people = set(slot_dict[slot_id])
+                
+                # Loop through number of slots and delete people who can't make it
+                for i in range(num_slots - 1):
+                    slot_id = next_slot(slot_id)
+                    if slot_id not in slot_dict:
+                        people = set()
+                        break
+                    else:
+                        people = people.intersection(set(slot_dict[slot_id]))
+                
+                modified_slot_dict[date + timeslot[:len(timeslot) // 2]] = people
+    
+    return modified_slot_dict
                 
 
 def next_slot(slot):
