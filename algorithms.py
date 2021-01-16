@@ -11,4 +11,36 @@ def modify_slots(meeting_length, slot_dict, dates, start_time, end_time):
     
     @returns modified_slot_dict (dict): dictionary where keys are slots (indicated by starting time) -- for the length of the meeting_length -- and values are list of names available in that slot
     """
-    return {}
+    
+    # Turn meeting_length into number of slots
+    num_slots = meeting_length // 30
+    
+    # Loop through days & time
+    for date in dates:
+        for time in range(start_time, end_time):
+            for timeslot in [str(time) + "00" + str(time) + "30", str(time) + "30" + str(time + 1) + "00"]:
+                slot_id = date + timeslot
+                
+
+def next_slot(slot):
+    """
+    returns the chronologically next slot
+    
+    @param slot(string): slot id input
+    @returns next_slot(string): slot id output
+    """
+    
+    start_slot = slot[8: 8 + (len(slot) - 8) // 2]
+    hour = int(start_slot[:-2])
+    minute = start_slot[-2:]
+    
+    if minute == "00":
+        new_start_slot = str(hour) + "30"
+        new_end_slot = str(hour + 1) + "00"
+    if minute == "30":
+        new_start_slot = str(hour + 1) + "00"
+        new_end_slot = str(hour + 1) + "30"
+    
+    next_slot = slot[:8] + new_start_slot + new_end_slot
+    
+    return next_slot

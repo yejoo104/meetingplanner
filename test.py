@@ -1,4 +1,11 @@
-from algorithms import modify_slots
+from algorithms import next_slot, modify_slots
+
+def test_next_slot():
+    assert next_slot("20201231800830") == "20201231830900"
+    assert next_slot("20201231330400") == "20201231400430"
+    assert next_slot("2021010117001730") == "2021010117301800"
+    assert next_slot("2021010119302000") == "2021010120002030"
+    assert next_slot("202010319301000") == "2020103110001030"
 
 def test_modify_slots():
     dates = ["20201231", "20210101", "20210102"]
@@ -50,4 +57,5 @@ def test_modify_slots():
                   "202101021730": ["A"],
                   "202101021800": ["A", "C"]}
 
+test_next_slot()
 test_modify_slots()
