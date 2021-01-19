@@ -36,7 +36,6 @@ def modify_slots(meeting_length, slot_dict, dates, start_time, end_time):
     
     return modified_slot_dict
                 
-
 def next_slot(slot):
     """
     returns the chronologically next slot
@@ -59,3 +58,17 @@ def next_slot(slot):
     next_slot = slot[:8] + new_start_slot + new_end_slot
     
     return next_slot
+
+def remove_unavailable_slots(slot_dict):
+    """
+    removes unavailable slots from the slot dictionary
+    
+    @param slot_dict (dict): dictionary where keys are slots and values are a set of available individuals
+    @returns slot_dict (dict): same dictionary as above, but with keys removed when there are no available individuals
+    """
+    
+    for key in list(slot_dict):
+        if len(slot_dict[key]) == 0:
+            del slot_dict[key]
+    
+    return slot_dict

@@ -1,4 +1,4 @@
-from algorithms import next_slot, modify_slots
+from algorithms import next_slot, modify_slots, remove_unavailable_slots
 
 def test_next_slot():
     assert next_slot("20201231800830") == "20201231830900"
@@ -109,5 +109,12 @@ def test_modify_slots():
                   "202101021800": set(),
                   "202101021830": set()}
 
+def test_remove_unavailable_slots():
+    slot1 = {"202008231500": set(), "202008231530": {"yej"}, "202008231600": {"bleh", "yej"}}
+    assert remove_unavailable_slots(slot1) == {"202008231530": {"yej"}, "202008231600": {"bleh", "yej"}}
+    slot2 = {"20210101300": set(), "20210101400": set(), "20210101500": set()}
+    assert remove_unavailable_slots(slot2) == {}
+
 test_next_slot()
 test_modify_slots()
+test_remove_unavailable_slots()
