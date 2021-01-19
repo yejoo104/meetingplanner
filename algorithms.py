@@ -91,6 +91,17 @@ def schedule(meeting_length, slot_dict, dates, start_time, end_time):
     @returns schedule(dict): dictionary where keys are slots and values are list of people allocated to the slot
     """
     
-    # Modify slot_dict and remove unavailable slots
-    slot_dict = remove_unavailable_slots(modify_slots(meeting_length, slot_dict, dates, start_time, end_time))
+    # Modify slot_dict and remove unavailable slots and create people (list of people) and slots (list of slots)
+    slot_dict, people = remove_unavailable_slots(modify_slots(meeting_length, slot_dict, dates, start_time, end_time))
+    slots = list(slot_dict.keys())
 
+    # Create a matrix where rows are people and columns are slots
+    matrix = [[0 for i in range(len(slots))] for j in range(len(people))]
+    for key in slot_dict:
+        for person in slot_dict[key]:
+            matrix[people.index(person)][slots.index(key)] = 1
+    print(people, slots, matrix)
+    
+
+slot_dict = {"20200809300330": ["A", "B", "C"], "20200809330400": ["A", "B", "D", "E"], "20200809400430": ["B", "E"], "20200809430500": ["A", "D"]}
+schedule(30, slot_dict, ["20200809"], 3, 5)
