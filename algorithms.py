@@ -1,4 +1,6 @@
 
+from mip import Model, BINARY, minimize, xsum
+
 def modify_slots(meeting_length, slot_dict, dates, start_time, end_time):
     """
     modifies the dictionary of slots such that the slot contains information not just about the 30 minute period but about the entire time period of the meeting
@@ -100,7 +102,24 @@ def schedule(meeting_length, slot_dict, dates, start_time, end_time):
     for key in slot_dict:
         for person in slot_dict[key]:
             matrix[people.index(person)][slots.index(key)] = 1
-    print(people, slots, matrix)
+            
+    # Create model
+    model = Model("setcover")
+    
+    # Add variables representing each slot
+    slot_variables = [model.add_var(var_type=BINARY) for i in range(len(slots))]
+    
+    # Add objective (minimize number of slots used)
+    model.objective = minimize(xsum(slot_variables[i] for i in range(len(slot_variables))))
+    
+    # Add constraints by iterating through the matrix
+    for i in range(len(people)):
+        model += xsum(matrix[i][j] * slot_variables[j] for j in range(len(slots))) >= 1
+    
+    model.optimize()
+    
+    for v in model.vars:
+        print('{} : {}'.format(v.name, v.x))
     
 
 slot_dict = {"20200809300330": ["A", "B", "C"], "20200809330400": ["A", "B", "D", "E"], "20200809400430": ["B", "E"], "20200809430500": ["A", "D"]}
