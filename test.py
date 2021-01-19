@@ -111,9 +111,9 @@ def test_modify_slots():
 
 def test_remove_unavailable_slots():
     slot1 = {"202008231500": set(), "202008231530": {"yej"}, "202008231600": {"bleh", "yej"}}
-    assert remove_unavailable_slots(slot1) == {"202008231530": {"yej"}, "202008231600": {"bleh", "yej"}}
+    assert remove_unavailable_slots(slot1) == ({"202008231530": {"yej"}, "202008231600": {"bleh", "yej"}}, ["yej", "bleh"])
     slot2 = {"20210101300": set(), "20210101400": set(), "20210101500": set()}
-    assert remove_unavailable_slots(slot2) == {}
+    assert remove_unavailable_slots(slot2) == ({}, [])
 
 test_next_slot()
 test_modify_slots()

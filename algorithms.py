@@ -65,17 +65,22 @@ def remove_unavailable_slots(slot_dict):
     
     @param slot_dict (dict): dictionary where keys are slots and values are a set of available individuals
     @returns slot_dict (dict): same dictionary as above, but with keys removed when there are no available individuals
+    @returns people (list): list of people who are available at least at some point
     """
+    
+    people = set()
     
     for key in list(slot_dict):
         if len(slot_dict[key]) == 0:
             del slot_dict[key]
+        else:
+            people = people.union(slot_dict[key])
     
-    return slot_dict
+    return slot_dict, list(people)
 
 def schedule(meeting_length, slot_dict, dates, start_time, end_time):
     """
-    creates a schedule based on everyone's availability
+    creates a schedule based on everyone's availability (used: integer linear programming, set cover problem)
     
     @param meeting_length(int): length of the meeting, in minutes
     @param slot_dict (dict): dictionary where keys are slots and values are list of names available in that slot
@@ -85,3 +90,7 @@ def schedule(meeting_length, slot_dict, dates, start_time, end_time):
 
     @returns schedule(dict): dictionary where keys are slots and values are list of people allocated to the slot
     """
+    
+    # Modify slot_dict and remove unavailable slots
+    slot_dict = remove_unavailable_slots(modify_slots(meeting_length, slot_dict, dates, start_time, end_time))
+
