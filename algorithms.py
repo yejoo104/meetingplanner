@@ -72,3 +72,16 @@ def remove_unavailable_slots(slot_dict):
             del slot_dict[key]
     
     return slot_dict
+
+def schedule(meeting_length, slot_dict, dates, start_time, end_time):
+    """
+    creates a schedule based on everyone's availability
+    
+    @param meeting_length(int): length of the meeting, in minutes
+    @param slot_dict (dict): dictionary where keys are slots and values are list of names available in that slot
+    @param dates (list): list of dates
+    @param start_time (int): starting time
+    @param end_time (int): ending time
+
+    @returns schedule(dict): dictionary where keys are slots and values are list of people allocated to the slot
+    """
