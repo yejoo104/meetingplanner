@@ -7,6 +7,7 @@ from flask import Flask, render_template, request, redirect, flash, session
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.security import generate_password_hash, check_password_hash
+from algorithms import schedule
 
 MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"]
 WEEKDAYS = ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"]
@@ -182,7 +183,7 @@ def login(meeting_id):
 def get_meeting(meeting_id):
     # Meeting admin is not logged in or logged in to another meeting
     if not session or session["meeting_id"] != meeting_id:
-        return render_template("admin.html", code = meeting_id, logged = False, dates_days = [], start_time = 0, end_time = 0, dict = {}, people = [])
+        return render_template("admin.html", code = meeting_id, logged = False, dates_days = [], start_time = 0, end_time = 0, dict = {}, people = [], scheduled = {})
 
     # Meeting admin is logged in
     else:
@@ -190,7 +191,7 @@ def get_meeting(meeting_id):
             cursor = connection.cursor()
             
             # Fetch meeting info
-            meeting_search = "SELECT dates, start_time, end_time FROM MEETING WHERE code=?"
+            meeting_search = "SELECT dates, start_time, end_time, hours, minutes FROM MEETING WHERE code=?"
             cursor.execute(meeting_search, (meeting_id, ))
             rows = cursor.fetchall()
             
@@ -206,6 +207,7 @@ def get_meeting(meeting_id):
             
             start_time = int(rows[0][1])
             end_time = int(rows[0][2])
+            meeting_length = rows[0][3] * 60 + rows[0][4]
             
             # Fetch info about those who marked their availability
             registrant_search = "SELECT name, availability FROM registration WHERE meeting_code=?"
@@ -233,5 +235,11 @@ def get_meeting(meeting_id):
                             if slot in registrant_dict[registrant]:
                                 slot_ppl.append(registrant)
                         dict[slot] = slot_ppl
+            
+            # Run a schedule function to figure out the optimal schedule based on current availabilities
+            for i in range(len(dates)):
+                dates[i] = dates[i][-4:] + dates[i][:2] + dates[i][3:5]
+            scheduled = schedule(meeting_length, dict, dates, start_time, end_time)
+            print(meeting_length, dict, dates, start_time, end_time)
         
-        return render_template("admin.html", code = meeting_id, logged = True, dates_days = dates_days, start_time = start_time, end_time = end_time, dict=dict, people=registrant_dict.keys())
+        return render_template("admin.html", code = meeting_id, logged = True, dates_days = dates_days, start_time = start_time, end_time = end_time, dict=dict, people=registrant_dict.keys(), scheduled = scheduled)
