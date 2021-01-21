@@ -131,12 +131,11 @@ def schedule(meeting_length, slot_dict, dates, start_time, end_time):
     schedule = {}
     for i in range(len(slots)):
         schedule[slots[i]] = set()
+        if not select[i]:
+            continue
         for person in slot_dict[slots[i]]:
             if person in people:
                 schedule[slots[i]].add(person)
                 people.remove(person)
                 
     return schedule
-
-slot_dict = {"20200809300330": ["A", "B", "C"], "20200809330400": ["A", "B", "D", "E"], "20200809400430": ["B", "E"], "20200809430500": ["A", "D"]}
-assert schedule(30, slot_dict, ["20200809"], 3, 5) == {"20200809300": {"A", "B", "C"}, "20200809330": {"D", "E"}, "20200809400": set(), "20200809430": set()}
