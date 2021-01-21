@@ -90,7 +90,7 @@ def schedule(meeting_length, slot_dict, dates, start_time, end_time):
     @param start_time (int): starting time
     @param end_time (int): ending time
 
-    @returns schedule(dict): dictionary where keys are slots and values are list of people allocated to the slot
+    @returns schedule(dict): dictionary where keys are slots and values are a set of people allocated to the slot
     """
     
     # Modify slot_dict and remove unavailable slots and create people (list of people) and slots (list of slots)
@@ -116,11 +116,27 @@ def schedule(meeting_length, slot_dict, dates, start_time, end_time):
     for i in range(len(people)):
         model += xsum(matrix[i][j] * slot_variables[j] for j in range(len(slots))) >= 1
     
+    # Run integer linear programming
     model.optimize()
     
+    # Comprehend results (select is whether we select the slot or not
+    select = []
     for v in model.vars:
-        print('{} : {}'.format(v.name, v.x))
+        if v.x == 1:
+            select.append(True)
+        else:
+            select.append(False)
     
+    # Create schedule dictionary (greedy algorithm for now)
+    schedule = {}
+    for i in range(len(slots)):
+        schedule[slots[i]] = set()
+        for person in slot_dict[slots[i]]:
+            if person in people:
+                schedule[slots[i]].add(person)
+                people.remove(person)
+                
+    return schedule
 
 slot_dict = {"20200809300330": ["A", "B", "C"], "20200809330400": ["A", "B", "D", "E"], "20200809400430": ["B", "E"], "20200809430500": ["A", "D"]}
-schedule(30, slot_dict, ["20200809"], 3, 5)
+assert schedule(30, slot_dict, ["20200809"], 3, 5) == {"20200809300": {"A", "B", "C"}, "20200809330": {"D", "E"}, "20200809400": set(), "20200809430": set()}
