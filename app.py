@@ -240,6 +240,12 @@ def get_meeting(meeting_id):
             for i in range(len(dates)):
                 dates[i] = dates[i][-4:] + dates[i][:2] + dates[i][3:5]
             scheduled = schedule(meeting_length, dict, dates, start_time, end_time)
-            print(meeting_length, dict, dates, start_time, end_time)
+            
+            # Modify dictionary
+            for slot in scheduled:
+                date_string = MONTHS[int(slot[4:6]) - 1] + " " + slot[6:8]
+                start_string = str(start_time) + ":00"
+                end_string = str(start_time + rows[0][3]) + ":" + format(rows[0][4], '02d')
+                scheduled[slot] = (date_string, start_string, end_string, ", ".join(scheduled[slot]))
         
         return render_template("admin.html", code = meeting_id, logged = True, dates_days = dates_days, start_time = start_time, end_time = end_time, dict=dict, people=registrant_dict.keys(), scheduled = scheduled)

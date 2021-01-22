@@ -130,9 +130,9 @@ def schedule(meeting_length, slot_dict, dates, start_time, end_time):
     # Create schedule dictionary (greedy algorithm for now)
     schedule = {}
     for i in range(len(slots)):
-        schedule[slots[i]] = set()
         if not select[i]:
             continue
+        schedule[slots[i]] = set()
         for person in slot_dict[slots[i]]:
             if person in people:
                 schedule[slots[i]].add(person)

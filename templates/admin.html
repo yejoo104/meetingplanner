@@ -184,7 +184,12 @@
             </table>
         </div>
     </div>
-    <div class="col-sm">{{ scheduled }}</div>
+    <div class="col-sm">
+        <div>Workable Schedule</div>
+        {% for slot in scheduled %}
+        <div>{{ scheduled[slot][0] }} {{ scheduled[slot][1] }} - {{ scheduled[slot][2] }}: {{ scheduled[slot][3] }}</div>
+        {% endfor %}
+    </div>
     <div class="col-sm"></div>
 </div>
 {% with messages = get_flashed_messages() %}
