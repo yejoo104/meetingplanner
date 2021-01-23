@@ -244,8 +244,9 @@ def get_meeting(meeting_id):
             # Modify dictionary
             for slot in scheduled:
                 date_string = MONTHS[int(slot[4:6]) - 1] + " " + slot[6:8]
-                start_string = str(start_time) + ":00"
-                end_string = str(start_time + rows[0][3]) + ":" + format(rows[0][4], '02d')
+                slot_time = slot[8: 8 + (len(slot) - 8) // 2]
+                start_string = slot_time + ":00"
+                end_string = str(int(slot_time) + rows[0][3]) + ":" + format(rows[0][4], '02d')
                 scheduled[slot] = (date_string, start_string, end_string, ", ".join(scheduled[slot]))
         
         return render_template("admin.html", code = meeting_id, logged = True, dates_days = dates_days, start_time = start_time, end_time = end_time, dict=dict, people=registrant_dict.keys(), scheduled = scheduled)
