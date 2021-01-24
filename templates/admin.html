@@ -190,7 +190,9 @@
         {% for slot in scheduled %}
         <div>{{ scheduled[slot][0] }} {{ scheduled[slot][1] }} - {{ scheduled[slot][2] }}: {{ scheduled[slot][3] }}</div>
         {% endfor %}
-        <button class="btn-primary">Confirm Schedule</button>
+        <form method="post" action="/{{ code }}/">
+            <button class="btn btn-primary" type="submit" name="confirm">Confirm Schedule</button>
+        </form>
     </div>
 </div>
 {% with messages = get_flashed_messages() %}

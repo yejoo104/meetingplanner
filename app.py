@@ -179,7 +179,7 @@ def login(meeting_id):
             session["meeting_id"] = meeting_id
             return redirect("/" + meeting_id + "/")
 
-@app.route("/<meeting_id>/")
+@app.route("/<meeting_id>/", methods=["GET", "POST"])
 def get_meeting(meeting_id):
     # Meeting admin is not logged in or logged in to another meeting
     if not session or session["meeting_id"] != meeting_id:
@@ -248,5 +248,8 @@ def get_meeting(meeting_id):
                 start_string = slot_time + ":00"
                 end_string = str(int(slot_time) + rows[0][3]) + ":" + format(rows[0][4], '02d')
                 scheduled[slot] = (date_string, start_string, end_string, ", ".join(scheduled[slot]))
+                
+            if request.method == "POST" and "confirm" in request.form:
+                print("check")
         
         return render_template("admin.html", code = meeting_id, logged = True, dates_days = dates_days, start_time = start_time, end_time = end_time, dict=dict, people=registrant_dict.keys(), scheduled = scheduled)
