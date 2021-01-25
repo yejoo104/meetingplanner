@@ -216,6 +216,8 @@ def get_meeting(meeting_id):
             
             # If no registrants have marked availability, return template now :)
             if len(registrants) == 0:
+                if request.method == "POST":
+                    flash("There is no schedule to confirm")
                 return render_template("admin.html", code = meeting_id, logged = True, dates_days = dates_days, start_time = start_time, end_time = end_time, dict = {}, people = [], scheduled = {})
 
             # Create a registrant_dict where keys are people's names and values are a list of available slots
@@ -255,9 +257,13 @@ def get_meeting(meeting_id):
             
             # When admin confirms, add confirmed meeting info to sql
             if request.method == "POST" and "confirm" in request.form:
-                for slot in scheduled:
-                    for person in scheduled[slot][4]:
-                        confirmed_command = "UPDATE REGISTRATION SET confirmed_meeting=? WHERE name=? AND meeting_code=?"
-                        cursor.execute(confirmed_command, (slot, person, meeting_id))
+                if len(scheduled) == 0:
+                    flash("There is no schedule to confirm")
+                else:
+                    for slot in scheduled:
+                        for person in scheduled[slot][4]:
+                            confirmed_command = "UPDATE REGISTRATION SET confirmed_meeting=? WHERE name=? AND meeting_code=?"
+                            cursor.execute(confirmed_command, (slot, person, meeting_id))
+                    flash("Schedule has been confirmed")
         
         return render_template("admin.html", code = meeting_id, logged = True, dates_days = dates_days, start_time = start_time, end_time = end_time, dict=dict, people=registrant_dict.keys(), scheduled = scheduled)
