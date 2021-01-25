@@ -251,12 +251,12 @@ def get_meeting(meeting_id):
                 slot_time = slot[8: 8 + (len(slot) - 8) // 2]
                 start_string = slot_time + ":00"
                 end_string = str(int(slot_time) + rows[0][3]) + ":" + format(rows[0][4], '02d')
-                scheduled[slot] = (date_string, start_string, end_string, ", ".join(scheduled[slot]))
+                scheduled[slot] = (date_string, start_string, end_string, ", ".join(scheduled[slot]), scheduled[slot])
             
             # When admin confirms, add confirmed meeting info to sql
             if request.method == "POST" and "confirm" in request.form:
                 for slot in scheduled:
-                    for person in scheduled[slot][3]:
+                    for person in scheduled[slot][4]:
                         confirmed_command = "UPDATE REGISTRATION SET confirmed_meeting=? WHERE name=? AND meeting_code=?"
                         cursor.execute(confirmed_command, (slot, person, meeting_id))
         
