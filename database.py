@@ -31,7 +31,8 @@ name TEXT NOT NULL,
 password TEXT NOT NULL,
 availability TEXT,
 meeting_code TEXT NOT NULL,
-registrant_code TEXT NOT NULL);"""
+registrant_code TEXT NOT NULL,
+confirmed_meeting TEXT);"""
 
 cursor.execute(registration_command)
 

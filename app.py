@@ -214,6 +214,10 @@ def get_meeting(meeting_id):
             cursor.execute(registrant_search, (meeting_id, ))
             registrants = cursor.fetchall()
             
+            # If no registrants have marked availability, return template now :)
+            if len(registrants) == 0:
+                return render_template("admin.html", code = meeting_id, logged = True, dates_days = dates_days, start_time = start_time, end_time = end_time, dict = {}, people = [], scheduled = {})
+
             # Create a registrant_dict where keys are people's names and values are a list of available slots
             registrant_dict = {}
             for registrant in registrants:
@@ -248,8 +252,12 @@ def get_meeting(meeting_id):
                 start_string = slot_time + ":00"
                 end_string = str(int(slot_time) + rows[0][3]) + ":" + format(rows[0][4], '02d')
                 scheduled[slot] = (date_string, start_string, end_string, ", ".join(scheduled[slot]))
-                
+            
+            # When admin confirms, add confirmed meeting info to sql
             if request.method == "POST" and "confirm" in request.form:
-                print("check")
+                for slot in scheduled:
+                    for person in scheduled[slot][3]:
+                        confirmed_command = "UPDATE REGISTRATION SET confirmed_meeting=? WHERE name=? AND meeting_code=?"
+                        cursor.execute(confirmed_command, (slot, person, meeting_id))
         
         return render_template("admin.html", code = meeting_id, logged = True, dates_days = dates_days, start_time = start_time, end_time = end_time, dict=dict, people=registrant_dict.keys(), scheduled = scheduled)
