@@ -152,8 +152,8 @@
                     <div>
                         {% for j in range(start_time, end_time) %}
                         <div>
-                            <div style="width: 40px; height:15px; border-left: 1px black solid; background: #f0ffff; border-top: 1px black solid; border-right: 1px black solid;"></div>
-                            <div style="width: 40px; height:15px; border-left: 1px black solid; background: #f0ffff ; border-top: 1px black dotted; border-right: 1px black solid; {% if j == end_time - 1 %} border-bottom: 1px black solid {% endif %}"></div>
+                            <div id="{{ date_day[2] }}{{ j }}00{{ j }}30confirmed" style="width: 40px; height:15px; border-left: 1px black solid; background: #f0ffff; border-top: 1px black solid; border-right: 1px black solid;"></div>
+                            <div id="{{ date_day[2] }}{{ j }}30{{ j + 1 }}00confirmed" style="width: 40px; height:15px; border-left: 1px black solid; background: #f0ffff ; border-top: 1px black dotted; border-right: 1px black solid; {% if j == end_time - 1 %} border-bottom: 1px black solid {% endif %}"></div>
                         </div>
                         {% endfor %}
                     </div>
@@ -161,6 +161,7 @@
                 {% endfor %}
             </div>
         </div>
+        <div>{{ meetings }}
     </div>
 </div>
     

@@ -7,7 +7,7 @@ from flask import Flask, render_template, request, redirect, flash, session
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.security import generate_password_hash, check_password_hash
-from algorithms import schedule
+from algorithms import schedule, next_slot
 
 MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"]
 WEEKDAYS = ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"]
@@ -95,9 +95,10 @@ def get_availability(meeting_id, registrant_id):
     with sqlite3.connect("database.db") as connection:
         # Fetch this particular meeting info
         cursor = connection.cursor()
-        meeting_search = "SELECT dates, start_time, end_time FROM MEETING WHERE code=?"
+        meeting_search = "SELECT dates, start_time, end_time, hours, minutes FROM MEETING WHERE code=?"
         cursor.execute(meeting_search, (meeting_id, ))
         rows = cursor.fetchall()
+        meeting_slots = (rows[0][3] * 60 + rows[0][4]) // 30
         
         # Modify selected info
         dates = rows[0][0].split(",")
@@ -113,7 +114,7 @@ def get_availability(meeting_id, registrant_id):
         end_time = int(rows[0][2])
         
         # Fetch availability info
-        availability_search = "SELECT availability FROM REGISTRATION WHERE meeting_code=? AND registrant_code=?"
+        availability_search = "SELECT availability, confirmed_meeting FROM REGISTRATION WHERE meeting_code=? AND registrant_code=?"
         cursor.execute(availability_search, (meeting_id, registrant_id))
         rows = cursor.fetchall()
         availability = rows[0][0]
@@ -126,8 +127,21 @@ def get_availability(meeting_id, registrant_id):
                 a = a.split(":")
                 availability_dict[a[0]] = True if a[1] == "true" else False
         
+        # Modify confirmed_meeting info into confirmed slots
+        confirmed_meeting = rows[0][1]
+        if confirmed_meeting[-2:] == "00":
+            curr_slot = confirmed_meeting + confirmed_meeting[8: 8 + (len(confirmed_meeting) - 8) // 2] + "30"
+        else:
+            curr_slot = confirmed_meeting + str(int(confirmed_meeting[8: 8 + (len(confirmed_meeting) - 8) // 2]) + 1) + "00"
+        print(curr_slot)
+        
+        meetings = []
+        for i in range(meeting_slots):
+            meetings.append(curr_slot)
+            curr_slot = next_slot(curr_slot)
+        
         # return template
-        return render_template("availability.html", dates_days = dates_days, start_time = start_time, end_time = end_time, meeting_id = meeting_id, registrant_id = registrant_id, availability = availability_dict)
+        return render_template("availability.html", dates_days = dates_days, start_time = start_time, end_time = end_time, meeting_id = meeting_id, registrant_id = registrant_id, availability = availability_dict, meetings = meetings)
 
 @app.route("/request/<meeting_id>/<registrant_id>", methods=["POST"])
 def update(meeting_id, registrant_id):
