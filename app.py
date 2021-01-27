@@ -275,6 +275,11 @@ def get_meeting(meeting_id):
                     flash("There is no schedule to confirm")
                 else:
                     for slot in scheduled:
+                        # add to confirmed table
+                        confirmed_meeting_command = "INSERT INTO CONFIRMED(meeting_code, date, start_time, end_time, people) VALUES(?, ?, ?, ?, ?)"
+                        cursor.execute(confirmed_meeting_command, (meeting_id, scheduled[slot][0], scheduled[slot][1], scheduled[slot][2], scheduled[slot][3]))
+                        
+                        # update registration table
                         for person in scheduled[slot][4]:
                             confirmed_command = "UPDATE REGISTRATION SET confirmed_meeting=? WHERE name=? AND meeting_code=?"
                             cursor.execute(confirmed_command, (slot, person, meeting_id))

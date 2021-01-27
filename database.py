@@ -36,6 +36,16 @@ confirmed_meeting TEXT);"""
 
 cursor.execute(registration_command)
 
+# Command for creating confirmed table
+confirmed_command = """CREATE TABLE CONFIRMED(
+meeting_code TEXT NOT NULL,
+date TEXT NOT NULL,
+start_time TEXT NOT NULL,
+end_time TEXT NOT NULL,
+people TEXT NOT NULL);"""
+
+cursor.execute(confirmed_command)
+
 # Commit
 connection.commit()
 
