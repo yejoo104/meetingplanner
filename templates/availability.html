@@ -30,6 +30,7 @@
     
     window.onload = function(){
         AvailabilityColors();
+        ConfirmedColors();
     }
 
     function AvailabilityColors(){
@@ -41,6 +42,12 @@
                 element.style.background = "#00bfff";
             }
         }
+    }
+
+    function ConfirmedColors(){
+        {% for meeting in meetings %}
+        document.getElementById("{{ meeting + 'confirmed' }}").style.background = "#00bfff";
+        {% endfor %}
     }
     
     function SelectFrom(current){
@@ -161,7 +168,7 @@
                 {% endfor %}
             </div>
         </div>
-        <div>{{ meetings }}
+        <div>{{ meetings }}</div>
     </div>
 </div>
     
