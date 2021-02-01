@@ -127,18 +127,18 @@ def get_availability(meeting_id, registrant_id):
                 a = a.split(":")
                 availability_dict[a[0]] = True if a[1] == "true" else False
         
-        # Modify confirmed_meeting info into confirmed slots
-        confirmed_meeting = rows[0][1]
-        if confirmed_meeting[-2:] == "00":
-            curr_slot = confirmed_meeting + confirmed_meeting[8: 8 + (len(confirmed_meeting) - 8) // 2] + "30"
-        else:
-            curr_slot = confirmed_meeting + str(int(confirmed_meeting[8: 8 + (len(confirmed_meeting) - 8) // 2]) + 1) + "00"
-        print(curr_slot)
-        
+        # Modify confirmed_meeting info into confirmed slots, if there is a confirmed meeting
         meetings = []
-        for i in range(meeting_slots):
-            meetings.append(curr_slot)
-            curr_slot = next_slot(curr_slot)
+        confirmed_meeting = rows[0][1]
+        if confirmed_meeting:
+            if confirmed_meeting[-2:] == "00":
+                curr_slot = confirmed_meeting + confirmed_meeting[8: 8 + (len(confirmed_meeting) - 8) // 2] + "30"
+            else:
+                curr_slot = confirmed_meeting + str(int(confirmed_meeting[8: 8 + (len(confirmed_meeting) - 8) // 2]) + 1) + "00"
+        
+            for i in range(meeting_slots):
+                meetings.append(curr_slot)
+                curr_slot = next_slot(curr_slot)
         
         # return template
         return render_template("availability.html", dates_days = dates_days, start_time = start_time, end_time = end_time, meeting_id = meeting_id, registrant_id = registrant_id, availability = availability_dict, meetings = meetings)
