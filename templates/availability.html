@@ -168,6 +168,9 @@
                 {% endfor %}
             </div>
         </div>
+        {% for confirmed_meeting in confirmed %}
+        <div>{{ confirmed_meeting[0] }} {{ confirmed_meeting[1] }} ~ {{ confirmed_meeting[2] }} - {{ confirmed_meeting[3] }}</div>
+        {% endfor %}
     </div>
 </div>
     

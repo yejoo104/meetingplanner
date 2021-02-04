@@ -145,10 +145,9 @@ def get_availability(meeting_id, registrant_id):
         confirmed_search = """SELECT date, start_time, end_time, people FROM CONFIRMED WHERE meeting_code=? AND PEOPLE LIKE ?"""
         cursor.execute(confirmed_search, (meeting_id, '%' + name + '%'))
         confirmed_rows = cursor.fetchall()
-        print(confirmed_rows)
         
         # return template
-        return render_template("availability.html", dates_days = dates_days, start_time = start_time, end_time = end_time, meeting_id = meeting_id, registrant_id = registrant_id, availability = availability_dict, meetings = meetings)
+        return render_template("availability.html", dates_days = dates_days, start_time = start_time, end_time = end_time, meeting_id = meeting_id, registrant_id = registrant_id, availability = availability_dict, meetings = meetings, confirmed = confirmed_rows)
 
 @app.route("/request/<meeting_id>/<registrant_id>", methods=["POST"])
 def update(meeting_id, registrant_id):
