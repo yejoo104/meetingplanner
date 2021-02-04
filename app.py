@@ -114,10 +114,11 @@ def get_availability(meeting_id, registrant_id):
         end_time = int(rows[0][2])
         
         # Fetch availability info
-        availability_search = "SELECT availability, confirmed_meeting FROM REGISTRATION WHERE meeting_code=? AND registrant_code=?"
+        availability_search = "SELECT availability, confirmed_meeting, name FROM REGISTRATION WHERE meeting_code=? AND registrant_code=?"
         cursor.execute(availability_search, (meeting_id, registrant_id))
         rows = cursor.fetchall()
         availability = rows[0][0]
+        name = rows[0][2]
         
         # Modify avilability string into array, if info exists
         availability_dict = {}
@@ -139,6 +140,12 @@ def get_availability(meeting_id, registrant_id):
             for i in range(meeting_slots):
                 meetings.append(curr_slot)
                 curr_slot = next_slot(curr_slot)
+                
+        # Find info about confirmed meetings
+        confirmed_search = """SELECT date, start_time, end_time, people FROM CONFIRMED WHERE meeting_code=? AND PEOPLE LIKE ?"""
+        cursor.execute(confirmed_search, (meeting_id, '%' + name + '%'))
+        confirmed_rows = cursor.fetchall()
+        print(confirmed_rows)
         
         # return template
         return render_template("availability.html", dates_days = dates_days, start_time = start_time, end_time = end_time, meeting_id = meeting_id, registrant_id = registrant_id, availability = availability_dict, meetings = meetings)
