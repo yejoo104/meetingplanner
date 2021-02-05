@@ -275,11 +275,13 @@ def get_meeting(meeting_id):
                 end_string = str(int(slot_time) + rows[0][3]) + ":" + format(rows[0][4], '02d')
                 scheduled[slot] = (date_string, start_string, end_string, ", ".join(scheduled[slot]), scheduled[slot])
             
-            # When admin confirms, add confirmed meeting info to sql
+            # When admin confirms, delete previously confirmed meetings and add confirmed meeting info to sql
             if request.method == "POST" and "confirm" in request.form:
                 if len(scheduled) == 0:
                     flash("There is no schedule to confirm")
                 else:
+                    delete_command = "DELETE FROM CONFIRMED WHERE meeting_code=?"
+                    cursor.execute(delete_command, (meeting_id, ))
                     for slot in scheduled:
                         # add to confirmed table
                         confirmed_meeting_command = "INSERT INTO CONFIRMED(meeting_code, date, start_time, end_time, people) VALUES(?, ?, ?, ?, ?)"
