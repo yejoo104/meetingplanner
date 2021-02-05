@@ -174,6 +174,10 @@ def update(meeting_id, registrant_id):
         # Add availability string to database
         add_availability = "UPDATE REGISTRATION SET availability=? WHERE meeting_code=? AND registrant_code=?"
         cursor.execute(add_availability, (availability[:-1], meeting_id, registrant_id))
+        
+        # Scrap confirmed meetings since availability is changed
+        delete_command = "DELETE FROM CONFIRMED WHERE meeting_code=?"
+        cursor.execute(delete_command, (meeting_id, ))
     
     return json.dumps([""])
 
