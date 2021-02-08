@@ -1,5 +1,6 @@
 
 from mip import Model, BINARY, minimize, xsum
+import math
 
 def modify_slots(meeting_length, slot_dict, dates, start_time, end_time):
     """
@@ -61,11 +62,13 @@ def next_slot(slot):
     
     return next_slot
 
-def remove_unavailable_slots(slot_dict):
+def remove_unavailable_slots(slot_dict, min_people = 1, max_people = math.inf):
     """
     removes unavailable slots from the slot dictionary
     
     @param slot_dict (dict): dictionary where keys are slots and values are a set of available individuals
+    @param min_people (int): minimum number of people that are necessary for a meeting (default: 1)
+    @param max_people (int): maximum number of people that can be present at a meeting
     @returns slot_dict (dict): same dictionary as above, but with keys removed when there are no available individuals
     @returns people (list): list of people who are available at least at some point
     """
@@ -73,7 +76,7 @@ def remove_unavailable_slots(slot_dict):
     people = set()
     
     for key in list(slot_dict):
-        if len(slot_dict[key]) == 0:
+        if len(slot_dict[key]) < min_people or len(slot_dict[key]) > max_people :
             del slot_dict[key]
         else:
             people = people.union(slot_dict[key])
