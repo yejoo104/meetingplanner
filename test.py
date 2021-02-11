@@ -1,4 +1,5 @@
 from algorithms import next_slot, modify_slots, remove_unavailable_slots, schedule
+import copy
 
 def test_next_slot():
     assert next_slot("20201231800830") == "20201231830900"
@@ -112,8 +113,61 @@ def test_modify_slots():
 def test_remove_unavailable_slots():
     slot1 = {"202008231500": set(), "202008231530": {"yej"}, "202008231600": {"bleh", "yej"}}
     assert remove_unavailable_slots(slot1)[0] == {"202008231530": {"yej"}, "202008231600": {"bleh", "yej"}}
+    assert remove_unavailable_slots(copy.deepcopy(slot1), 2, 4)[0] == {"202008231600": {"bleh", "yej"}}
     slot2 = {"20210101300": set(), "20210101400": set(), "20210101500": set()}
     assert remove_unavailable_slots(slot2) == ({}, [])
+    slot3 = {"202012311500": set(),
+             "202012311530": set(),
+             "202012311600": {"A"},
+             "202012311630": {"A", "B"},
+             "202012311700": {"A", "C", "D"},
+             "202012311730": {"C"},
+             "202012311800": {"B"},
+             "202012311830": set(),
+             "202101011500": {"A", "B", "C", "D", "E"},
+             "202101011530": {"A", "C", "D", "E"},
+             "202101011600": {"C", "D", "E", "F"},
+             "202101011630": {"D", "E", "F"},
+             "202101011700": set(),
+             "202101011730": set(),
+             "202101011800": set(),
+             "202101011830": set(),
+             "202101021500": set(),
+             "202101021530": set(),
+             "202101021600": {"E", "H"},
+             "202101021630": {"H"},
+             "202101021700": set(),
+             "202101021730": {"A"},
+             "202101021800": {"A", "C"},
+             "202101021830": set()}
+    assert remove_unavailable_slots(copy.deepcopy(slot3))[0] == {"202012311600": {"A"},
+                                                  "202012311630": {"A", "B"},
+                                                  "202012311700": {"A", "C", "D"},
+                                                  "202012311730": {"C"},
+                                                  "202012311800": {"B"},
+                                                  "202101011500": {"A", "B", "C", "D", "E"},
+                                                  "202101011530": {"A", "C", "D", "E"},
+                                                  "202101011600": {"C", "D", "E", "F"},
+                                                  "202101011630": {"D", "E", "F"},
+                                                  "202101021600": {"E", "H"},
+                                                  "202101021630": {"H"},
+                                                  "202101021730": {"A"},
+                                                  "202101021800": {"A", "C"}}
+    assert remove_unavailable_slots(copy.deepcopy(slot3), 2, 3)[0] == {"202012311630": {"A", "B"},
+                                                        "202012311700": {"A", "C", "D"},
+                                                        "202101011630": {"D", "E", "F"},
+                                                        "202101021600": {"E", "H"},
+                                                        "202101021800": {"A", "C"}}
+    assert remove_unavailable_slots(copy.deepcopy(slot3), 3, 5)[0] == {"202012311700": {"A", "C", "D"},
+                                                        "202101011500": {"A", "B", "C", "D", "E"},
+                                                        "202101011530": {"A", "C", "D", "E"},
+                                                        "202101011600": {"C", "D", "E", "F"},
+                                                        "202101011630": {"D", "E", "F"}}
+    assert remove_unavailable_slots(copy.deepcopy(slot3), 3, 4)[0] == {"202012311700": {"A", "C", "D"},
+                                                        "202101011530": {"A", "C", "D", "E"},
+                                                        "202101011600": {"C", "D", "E", "F"},
+                                                        "202101011630": {"D", "E", "F"}}
+
 
 def test_schedule():
     dates = ["20201231", "20210101", "20210102"]
@@ -147,4 +201,4 @@ def test_schedule():
 test_next_slot()
 test_modify_slots()
 test_remove_unavailable_slots()
-test_schedule()
+#test_schedule()
