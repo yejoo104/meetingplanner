@@ -201,4 +201,4 @@ def test_schedule():
 test_next_slot()
 test_modify_slots()
 test_remove_unavailable_slots()
-#test_schedule()
+test_schedule()

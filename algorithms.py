@@ -68,7 +68,7 @@ def remove_unavailable_slots(slot_dict, min_people = 1, max_people = math.inf):
     
     @param slot_dict (dict): dictionary where keys are slots and values are a set of available individuals
     @param min_people (int): minimum number of people that are necessary for a meeting (default: 1)
-    @param max_people (int): maximum number of people that can be present at a meeting
+    @param max_people (int): maximum number of people that can be present at a meeting (default: infinity)
     @returns slot_dict (dict): same dictionary as above, but with keys removed when there are no available individuals
     @returns people (list): list of people who are available at least at some point
     """
@@ -83,7 +83,7 @@ def remove_unavailable_slots(slot_dict, min_people = 1, max_people = math.inf):
     
     return slot_dict, list(people)
 
-def schedule(meeting_length, slot_dict, dates, start_time, end_time):
+def schedule(meeting_length, slot_dict, dates, start_time, end_time, min_people = 1, max_people = math.inf):
     """
     creates a schedule based on everyone's availability (used: integer linear programming, set cover problem)
     
@@ -92,12 +92,14 @@ def schedule(meeting_length, slot_dict, dates, start_time, end_time):
     @param dates (list): list of dates
     @param start_time (int): starting time
     @param end_time (int): ending time
+    @param min_people (int): minimum number of people that are necessary for a meeting (default: 1)
+    @param max_people (maximum number of people that can be present at a meeting (default: infinity)
 
     @returns schedule(dict): dictionary where keys are slots and values are a set of people allocated to the slot
     """
     
     # Modify slot_dict and remove unavailable slots and create people (list of people) and slots (list of slots)
-    slot_dict, people = remove_unavailable_slots(modify_slots(meeting_length, slot_dict, dates, start_time, end_time))
+    slot_dict, people = remove_unavailable_slots(modify_slots(meeting_length, slot_dict, dates, start_time, end_time), min_people, max_people)
     slots = list(slot_dict.keys())
 
     # Create a matrix where rows are people and columns are slots
