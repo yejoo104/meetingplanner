@@ -92,14 +92,12 @@ def schedule(meeting_length, slot_dict, dates, start_time, end_time, min_people 
     @param dates (list): list of dates
     @param start_time (int): starting time
     @param end_time (int): ending time
-    @param min_people (int): minimum number of people that are necessary for a meeting (default: 1)
-    @param max_people (maximum number of people that can be present at a meeting (default: infinity)
 
     @returns schedule(dict): dictionary where keys are slots and values are a set of people allocated to the slot
     """
     
     # Modify slot_dict and remove unavailable slots and create people (list of people) and slots (list of slots)
-    slot_dict, people = remove_unavailable_slots(modify_slots(meeting_length, slot_dict, dates, start_time, end_time), min_people, max_people)
+    slot_dict, people = remove_unavailable_slots(modify_slots(meeting_length, slot_dict, dates, start_time, end_time))
     slots = list(slot_dict.keys())
 
     # Create a matrix where rows are people and columns are slots
